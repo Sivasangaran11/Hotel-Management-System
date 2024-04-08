@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import './styles.css';
 import { SelectedItemsContext } from './Menu2';
+import { Link } from 'react-router-dom';
 
 const Cart = ({ totalAmount }) => {
     const { selectedItems } = useContext(SelectedItemsContext);
