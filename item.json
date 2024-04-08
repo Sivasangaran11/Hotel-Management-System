@@ -6,7 +6,7 @@
       "description": "Delicious Dish",
       "price": 200,
       "source": "plate1.png",
-      "order": 31
+      "order": 33
     },
     {
       "id": "2",
@@ -14,7 +14,7 @@
       "description": "Delicious Dish",
       "price": 150,
       "source": "plate2.png",
-      "order": 25
+      "order": 27
     },
     {
       "id": "3",
@@ -22,7 +22,7 @@
       "description": "Delicious Dish",
       "price": 100,
       "source": "plate3.png",
-      "order": 11
+      "order": 15
     },
     {
       "id": "4",

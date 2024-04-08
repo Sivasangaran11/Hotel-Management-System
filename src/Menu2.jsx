@@ -58,9 +58,9 @@ const Menu = (props) => {
     if (error) {
         return <div>{error}</div>;
     }
-
+    console.log(selectedItems);
     return (
-        <SelectedItemsContext.Provider value={{ selectedItems }}>
+        <SelectedItemsContext.Provider value={{ selectedItems, setSelectedItems }}>
             <section className="menu section bd-container" id="menu">
                 <h2 className="section-title">Menu</h2>
                 <div className="menu__container bd-grid">
@@ -85,9 +85,10 @@ const Menu = (props) => {
                 </div>
             </Link>
             {/* Render Cart component based on showCart state */}
-            {showCart && <Cart />}
+            {showCart && <Cart  />}
         </SelectedItemsContext.Provider>
     );
 };
+
 
 export default Menu;

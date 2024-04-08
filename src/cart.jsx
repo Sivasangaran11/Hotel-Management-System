@@ -1,16 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
 import './styles.css';
-import { SelectedItemsContext } from './Menu2';
+import { SelectedItemsContext } from './Menu2.jsx';
 import { Link } from 'react-router-dom';
 
 const Cart = ({ totalAmount }) => {
-    const { selectedItems } = useContext(SelectedItemsContext);
+    const { selectedItems, setSelectedItems } = useContext(SelectedItemsContext);
     const [cartItems, setCartItems] = useState(selectedItems);
+
     useEffect(() => {
         // Update cartItems state whenever selectedItems context value changes
         setCartItems(selectedItems);
     }, [selectedItems]);
+
     console.log(cartItems);
+
     const updateOrderCount = (itemId, newOrderCount) => {
         fetch(`http://localhost:8000/item/${itemId}`, {
             method: 'PATCH',
@@ -41,6 +44,7 @@ const Cart = ({ totalAmount }) => {
             return item;
         });
         setCartItems(updatedItems);
+        setSelectedItems(updatedItems); // Update context state
     };
     
     const decrementOrder = (itemId) => {
@@ -53,6 +57,7 @@ const Cart = ({ totalAmount }) => {
             return item;
         });
         setCartItems(updatedItems);
+        setSelectedItems(updatedItems); // Update context state
     };
     
     return (
@@ -103,5 +108,6 @@ const Cart = ({ totalAmount }) => {
         </div>
     );
 };
+
 
 export default Cart;

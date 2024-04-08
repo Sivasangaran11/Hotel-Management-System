@@ -45,9 +45,7 @@ function App() {
     setCurrentForm(formName);
   }
   return(<div className="menuPage">
-    {currentForm === 'Menu' ? 
     <Menu onFormSwitch = {toggleForm}/>
-    :<Cart onFormSwitch = {toggleForm}/>}
   </div>
   );
 };
