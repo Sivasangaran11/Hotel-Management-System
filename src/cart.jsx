@@ -59,7 +59,9 @@ const Cart = ({ totalAmount }) => {
             <div className="Header">
                 <h3 className="Heading">Cart</h3>
                 <a href="/menu_page" className="back">
-                    <h5 className="Action">Back to Menu <i className='bx bxs-food-menu'></i></h5>
+                    <Link to ="/menu">
+                        <h5 className="Action">Back to Menu <i className='bx bxs-food-menu'></i></h5>
+                    </Link>
                 </a>
             </div>
 
