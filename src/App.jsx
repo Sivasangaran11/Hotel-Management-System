@@ -1,4 +1,4 @@
-/*import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Login, ForgotPassword, Register } from './LoginPage.jsx';
 import { HomePage, AboutPage, Contact } from './Home.jsx';
 import {Header, Footer} from './HAF.jsx';
@@ -34,9 +34,9 @@ function App() {
 }
 
 export default App;
-*/
+
+/*
 import React, { useState } from 'react';
-import Cart from './cart.jsx';
 import Menu from './Menu2.jsx';
 function App() {
   const [currentForm, setCurrentForm] = useState('Menu');
@@ -50,3 +50,4 @@ function App() {
   );
 };
 export default App;
+*/

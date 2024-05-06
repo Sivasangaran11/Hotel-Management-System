@@ -1,22 +1,21 @@
 import React from 'react';
-import ReactDOM from 'react-dom'; // Import ReactDOM.render instead of ReactDOM.render
+import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import App from './App.jsx';
 import Menu from './Menu2.jsx';
 import Cart from './cart.jsx';
+import Table from './table.jsx';
 
 const Root = () => {
   return (
     <React.StrictMode>
       <Router>
-      <Menu>
-        <Routes>
-            <Route exact path="/" element={<App />} />
-            <Route path="/menu" element={<Menu />} />
-            
+          <Routes>
+              <Route exact path="/" element={<App />} />
+              <Route path="/menu" element={<Menu />} />
               <Route path="/cart" element={<Cart />} />
-        </Routes>
-        </Menu>
+              <Route path="/table" element={<Table />} />
+            </Routes>
       </Router>
     </React.StrictMode>
   );

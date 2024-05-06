@@ -124,7 +124,7 @@ img{
 
 /*========== CLASS CSS ==========*/
 .section{
-    
+    margin-left: 0px !important;
 }
 
 .section-title, .section-subtitle{
@@ -155,6 +155,8 @@ img{
 .bd-grid{
   display: grid;
   gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
 .l-header{
@@ -297,16 +299,40 @@ img{
 }
 
 /*========== BUTTONS ==========*/
-.button{
+.button {
+  background-color: #c2fbd7;
+  border-radius: 100px;
+  box-shadow: rgba(44, 187, 99, .2) 0 -25px 18px -14px inset,rgba(44, 187, 99, .15) 0 1px 2px,rgba(44, 187, 99, .15) 0 2px 4px,rgba(44, 187, 99, .15) 0 4px 8px,rgba(44, 187, 99, .15) 0 8px 16px,rgba(44, 187, 99, .15) 0 16px 32px;
+  color: green;
+  cursor: pointer;
+  display: inline-block;
+  font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
+  padding: 7px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 250ms;
+  border: 0;
+  font-size: 16px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-right: 30px;
+}
+.button:last-child {
+  margin-right: 0; 
+}
+.button-container{
+  display: flex;
+}
+.menu__button__add {
   display: inline-block;
   background-color: var(--first-color);
-  color: #FFF;
-  margin-right: 90px;
-  margin-left : 10px;
-  padding: .556rem 1rem;
+  color: #ffffff;
+  margin-right: 100px; /* Adjust as needed */
+  margin-left: 0px; /* Adjust as needed */
+  padding: 0.5rem 1rem;
   border: none;
-  border-radius: .90rem;
-  transition: .3s;
+  border-radius: .9rem;
 }
 
 .button:hover{
@@ -614,7 +640,8 @@ img{
 
   .about__container,
   .app__container{
-    column-gap: 7rem;
+    column-gap: 4rem;
+    position: absolute;
   }
 }
 

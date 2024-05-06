@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import './styles.css';
+import './style-cart.css';
 import { SelectedItemsContext } from './Menu2.jsx';
 import { Link } from 'react-router-dom';
 

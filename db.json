@@ -1,19 +1,176 @@
 {
-  "login": [
+  "item": [
     {
       "id": "1",
-      "name": "siva",
-      "pass": "sangaran"
+      "name": "Barbecue Salad",
+      "description": "Delicious Dish",
+      "price": 200,
+      "source": "plate1.png",
+      "order": 33
     },
     {
-      "id": "caf6",
+      "id": "2",
+      "name": "Salad with Fish",
+      "description": "Delicious Dish",
+      "price": 150,
+      "source": "plate2.png",
+      "order": 27
+    },
+    {
+      "id": "3",
+      "name": "Spinach Salad",
+      "description": "Delicious Dish",
+      "price": 100,
+      "source": "plate3.png",
+      "order": 15
+    },
+    {
+      "id": "4",
+      "name": "Fresh Salad",
+      "description": "Delicious Dish",
+      "price": 200,
+      "source": "salad.png",
+      "order": 14
+    },
+    {
+      "id": "5",
+      "name": "Fried Noodles",
+      "description": "Delicious Dish",
+      "price": 200,
+      "source": "noodles.png",
+      "order": 12
+    },
+    {
+      "id": "6",
+      "name": "Roasted Chicken",
+      "description": "Delicious Dish",
+      "price": 300,
+      "source": "chicken.png",
+      "order": 1
+    },
+    {
+      "id": "7",
+      "name": "Cheese Pizza",
+      "description": "Delicious Dish",
+      "price": 200,
+      "source": "pizza.png",
+      "order": 11
+    },
+    {
+      "id": "8",
+      "name": "Barbecue Salad",
+      "description": "Delicious Dish",
+      "price": 200,
+      "source": "plate1.png",
+      "order": 20
+    },
+    {
+      "id": "9",
+      "name": "Salad with Fish",
+      "description": "Delicious Dish",
+      "price": 150,
+      "source": "plate2.png",
+      "order": 30
+    }
+  ],
+  "users": [
+    {
+      "id": "b4de6afd-920e-466a-abb7-122eca8361e7",
+      "name": "Sivasangaran T",
       "email": "sangaransiva91@gmail.com",
-      "password": "SivaHP2003"
+      "address": "Adroit District, Block A1",
+      "phoneNumber": "sangaransiva91@gmail.com",
+      "password": "$2a$10$BCCHBon9TQiM/FCsho7xXe9myPGPIZKnoewogEm871IgEjh7cEue."
     },
     {
-      "id": "f28b",
-      "email": "blash@gmail.com",
-      "password": "sivjah"
+      "id": "1a704152-1230-4b4b-8cb2-3654f8008558",
+      "name": "Sivasangaran T",
+      "email": "sangaransiva91@gmail.com",
+      "address": "Adroit District, Block A1",
+      "phoneNumber": "6385853990",
+      "password": "$2a$10$ohV9J4qhPqxNYMlfjwoWI.ZFSoB2wtHczf5rcigXTE6fyB2/PyEUu"
+    }
+  ],
+  "table": [
+    {
+      "id": 1,
+      "number": 1,
+      "time": "10:00-11:00 am",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 2,
+      "number": 2,
+      "time": "10:00-11:00 am",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 3,
+      "number": 6,
+      "time": "11:00-12:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 4,
+      "number": 4,
+      "time": "11:00-12:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 5,
+      "number": 5,
+      "time": "12:00-01:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 6,
+      "number": 5,
+      "time": "01:00-02:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 7,
+      "number": 6,
+      "time": "01:00-02:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 8,
+      "number": 8,
+      "time": "02:00-03:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 9,
+      "number": 1,
+      "time": "03:00-04:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
+    },
+    {
+      "id": 10,
+      "number": 2,
+      "time": "03:00-04:00 pm",
+      "date": "24/11/21",
+      "accommodation": 4,
+      "reservee": null
     }
   ]
 }
