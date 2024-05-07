@@ -79,11 +79,9 @@ const Menu = (props) => {
                 </div>
             </section>
             {/* Cart icon */}
-            <Link to = "/cart">
                 <div className="cart-icon" onClick={handleCartIconClick}>
                     <FontAwesomeIcon icon={faShoppingCart} />
                 </div>
-            </Link>
             {/* Render Cart component based on showCart state */}
             {showCart && <Cart  />}
         </SelectedItemsContext.Provider>

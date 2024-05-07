@@ -16,8 +16,8 @@ function HomePage() {
                             <h1 className="home__title">Welcome!<br/>Try our food</h1>
                             <h3 className="home__subtitle">Nothing brings people together like good food.</h3>
                             <div className="button-container">
-                                <a href="#" className="button">View Menu</a>
-                                <Link to="/table" className="button">Reserve Table</Link>
+                                <Link to = "/menu"><a  className="button">View Menu</a></Link>
+                                <Link to="/table"><a className="button">Reserve Table</a></Link>
                             </div>
                         </div>
                         

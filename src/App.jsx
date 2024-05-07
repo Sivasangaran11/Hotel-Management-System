@@ -1,39 +1,42 @@
-import React, { useState } from 'react';
-import { Login, ForgotPassword, Register } from './LoginPage.jsx';
-import { HomePage, AboutPage, Contact } from './Home.jsx';
-import {Header, Footer} from './HAF.jsx';
-
-
-
+import React, { useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { Login, ForgotPassword, Register } from "./LoginPage.jsx";
+import { HomePage, AboutPage, Contact } from "./Home.jsx";
+import Menu from "./Menu2.jsx";
+import Cart from "./cart.jsx";
+import Table from "./table.jsx";
+import { Header, Footer } from "./HAF.jsx";
 function App() {
-  const [currentForm, setCurrentForm] = useState('Home');
+  const [userID, setUserID] = useState(null);
+  const updateUser = (newUser) => {
+    setUserID(newUser);
+  };
 
-  const toggleForm = (formName) => {
-    setCurrentForm(formName);
-  }
+  const location = useLocation();
+  const shouldRenderHeaderFooter = !["/Login", "/Register", "/ForgotPassword"].includes(location.pathname);
 
   return (
     <div className="App">
-      {(currentForm!== 'Login' && currentForm !== 'Register' && currentForm !=='ForgotPassword')
-       &&<Header onFormSwitch={toggleForm}/>}
-      {currentForm === 'Home' ? (
-        <HomePage onFormSwitch={toggleForm} />
-      ) : currentForm === 'About' ? (
-        <AboutPage onFormSwitch={toggleForm} />
-      ) : currentForm === 'Contact' ? (
-        <Contact onFormSwitch={toggleForm} />
-      ) : currentForm === 'Login' ? (
-        <Login onFormSwitch={toggleForm} />
-      ) : currentForm === 'ForgotPassword' ? (
-        <ForgotPassword onFormSwitch={toggleForm} />
-      ) : currentForm === 'Register' ? (
-        <Register onFormSwitch={toggleForm} />
-      ) : null}
+        {shouldRenderHeaderFooter && <Header />}
+        <Routes>
+          <Route path="/" element={<HomePage userId={userID} />} />
+          <Route path="/menu" element={<Menu userId={userID} />} />
+          <Route path="/cart" element={<Cart userId={userID} />} />
+          <Route path="/table" element={<Table userId={userID} />} />
+          <Route path="/About" element={<AboutPage />} />
+          <Route path="/Contact" element={<Contact />} />
+          <Route path="/Login" element={<Login currentUser={updateUser} />} />
+          <Route path="/Register" element={<Register />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
+        </Routes>
+        {shouldRenderHeaderFooter && <Footer />}
     </div>
   );
 }
 
 export default App;
+
+
 
 /*
 import React, { useState } from 'react';
