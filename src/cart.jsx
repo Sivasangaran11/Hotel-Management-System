@@ -1,15 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
-import './styles.css';
-import { SelectedItemsContext } from './Menu2';
+import './style-cart.css';
+import { SelectedItemsContext } from './Menu2.jsx';
+import { Link } from 'react-router-dom';
 
 const Cart = ({ totalAmount }) => {
-    const { selectedItems } = useContext(SelectedItemsContext);
+    const { selectedItems, setSelectedItems } = useContext(SelectedItemsContext);
     const [cartItems, setCartItems] = useState(selectedItems);
+
     useEffect(() => {
         // Update cartItems state whenever selectedItems context value changes
         setCartItems(selectedItems);
     }, [selectedItems]);
+
     console.log(cartItems);
+
     const updateOrderCount = (itemId, newOrderCount) => {
         fetch(`http://localhost:8000/item/${itemId}`, {
             method: 'PATCH',
@@ -40,6 +44,7 @@ const Cart = ({ totalAmount }) => {
             return item;
         });
         setCartItems(updatedItems);
+        setSelectedItems(updatedItems); // Update context state
     };
     
     const decrementOrder = (itemId) => {
@@ -52,6 +57,7 @@ const Cart = ({ totalAmount }) => {
             return item;
         });
         setCartItems(updatedItems);
+        setSelectedItems(updatedItems); // Update context state
     };
     
     return (
@@ -59,7 +65,9 @@ const Cart = ({ totalAmount }) => {
             <div className="Header">
                 <h3 className="Heading">Cart</h3>
                 <a href="/menu_page" className="back">
-                    <h5 className="Action">Back to Menu <i className='bx bxs-food-menu'></i></h5>
+                    <Link to ="/menu">
+                        <h5 className="Action">Back to Menu <i className='bx bxs-food-menu'></i></h5>
+                    </Link>
                 </a>
             </div>
 
@@ -100,5 +108,6 @@ const Cart = ({ totalAmount }) => {
         </div>
     );
 };
+
 
 export default Cart;

@@ -1,99 +1,158 @@
-import React, { useState } from 'react';
-import log from './assets/img/log.svg';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebookF, faTwitter, faGoogle, faLinkedinIn } from '@fortawesome/free-brands-svg-icons';
-import './Login.css';
+import React, { useState } from "react";
+import log from "./assets/img/log.svg";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFacebookF,
+  faTwitter,
+  faGoogle,
+  faLinkedinIn,
+} from "@fortawesome/free-brands-svg-icons";
+import "./Login.css";
+import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
+//import SHA256 from 'crypto-js/sha256';
+//import CryptoJS from 'crypto-js';
+//import argon2 from 'argon2';
+//import bcrypt from "bcrypt";
+import { hashSync, compareSync } from "bcrypt-ts";
 //import './FTP.css';
 //import register from './assets/img/register.svg';
+const isValidEmail = (email) => {
+  // Regular expression for email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+const isValidPhoneNumber = (phoneNumber) => {
+  // Regular expression for phone number validation
+  const phoneRegex = /^[0-9]{10}$/;
+  return phoneRegex.test(phoneNumber);
+};
 
 const Login = (props) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const postData = async (url, data) => {
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error('Failed to login');
-      }
-      return response.json();
-    } catch (error) {
-      throw new Error(`Error logging in: ${error.message}`);
-    }
-  };
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    // Validate email and password fields
+    if (!email.trim()) {
+      setError("Please enter your email.");
+      return;
+    }
+
+    if (!password.trim()) {
+      setError("Please enter your password.");
+      return;
+    }
+    if (email.length > 50) {
+      setError("Email address exceeds the maximum character limit (50).");
+      return;
+    }
+
     try {
-      const response = await postData('http://localhost:8000/login', { email, password });
-      console.log('Login response:', response);
-      // Optionally, handle successful login response here (e.g., redirect to another page)
+      // Fetch user data from the server
+      const response = await axios.get("http://localhost:8000/users");
+      const usersData = response.data;
+
+      // Find user by email in the fetched data
+      const user = usersData.find((user) => user.email === email);
+
+      if (!user) {
+        // Display alert message if user does not exist
+        window.alert("User does not exist. Please register.");
+        // Redirect to register page
+        props.onFormSwitch("Register");
+        return;
+      }
+
+      // Compare the entered password with the hashed password using bcrypt-ts
+      const passwordMatch = compareSync(password, user.password);
+      if (!passwordMatch) {
+        // Display alert message if password is incorrect
+        window.alert("Incorrect password.");
+        return;
+      }
+
+      // Optionally, handle successful login (e.g., redirect to another page)
+      props.onFormSwitch("Home");
+      console.log("Login successful!");
     } catch (error) {
-      console.error('Error logging in:', error);
-      // Optionally, handle login error here (e.g., show error message to user)
+      console.error("Error logging in:", error);
+      setError("Failed to login. Please try again later.");
     }
   };
   return (
-    <>
-      <div className="container">
-        <div className="forms-container">
-          <div className="signin-signup">
-            <form method="POST" onSubmit={handleSubmit} className="sign-in-form">
-              <h2 className="title">SignIn</h2>
-              <div className="input-field">
-                <i className="fas fa-user"></i>
-                <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="Your Email" />
-              </div>
-              <div className="input-field">
-                <i className="fas fa-lock"></i>
-                <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" placeholder="Password" />
-              </div>
-
-              <div className='f-password'>
-                <h4 className="forgot-password">
-                  <a className="fp-link" onClick={() =>props.onFormSwitch("ForgotPassword")}>Forgot Password?</a>
-                </h4>
-              </div>
-
-              <input type="submit" value="Login" className="btn solid" />
-              <p className="social-text">Or Sign in with social platforms</p>
-              <div className="social-media">
-                <a href="#" className="social-icon">
-                  <FontAwesomeIcon icon={faFacebookF} />
-                </a>
-                <a href="#" className="social-icon">
-                  <FontAwesomeIcon icon={faTwitter} />
-                </a>
-                <a href="#" className="social-icon">
-                  <FontAwesomeIcon icon={faGoogle} />
-                </a>
-                <a href="#" className="social-icon">
-                  <FontAwesomeIcon icon={faLinkedinIn} />
-                </a>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div className="panels-container">
-              <div className="panel left-panel">
-                <div className="content">
-                  <h3>New here?</h3>
-                  <p>
-                    Register yourself to access our services.
-                  </p>
-                  <button className="btn transparent" id="sign-up-btn" onClick={() =>props.onFormSwitch("Register")} >
-                    Sign up
-                  </button>
-                </div>
-                <img src={log} className="image" alt="" />
-              </div>
+    <div className="container">
+      <div className="forms-container">
+        <div className="signin-signup">
+          <form onSubmit={handleSubmit} className="sign-in-form">
+            <h2 className="title">Sign In</h2>
+            {error && <p className="error">{error}</p>}
+            <div className="input-field">
+              <i className="fas fa-user"></i>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Your Email"
+              />
             </div>
+            <div className="input-field">
+              <i className="fas fa-lock"></i>
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                placeholder="Password"
+              />
+            </div>
+            <input
+              type="submit"
+              value="Login"
+              className="btn solid"
+              onClick={handleSubmit}
+            />
+            <p className="social-text">Or Sign in with social platforms</p>
+            <div className="social-media">
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faFacebookF} />
+              </a>
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faGoogle} />
+              </a>
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faLinkedinIn} />
+              </a>
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faTwitter} />
+              </a>
+            </div>
+          </form>
+        </div>
       </div>
-    </>
+      <div className="panels-container">
+        <div className="panel left-panel">
+          <div className="content">
+            <h3>New here?</h3>
+            <p>Register yourself to access our services.</p>
+            <button
+              className="btn transparent"
+              id="sign-up-btn"
+              onClick={() => props.onFormSwitch("Register")}
+            >
+              Sign up
+            </button>
+          </div>
+          <img src={log} className="image" alt="" />
+        </div>
+      </div>
+    </div>
   );
 };
 const ForgotPassword = (props) => {
@@ -114,7 +173,6 @@ const ForgotPassword = (props) => {
     setPassword1("");
     setPassword2("");
     // Optionally, you can switch back to the login form after successful password change
-    ;
   };
 
   return (
@@ -151,7 +209,12 @@ const ForgotPassword = (props) => {
                 placeholder="Confirm New Password"
               />
             </div>
-            <input type="submit" value="Submit" className="btn solid" onClick={() =>props.onFormSwitch("login")}/>
+            <input
+              type="submit"
+              value="Submit"
+              className="btn solid"
+              onClick={() => props.onFormSwitch("login")}
+            />
           </form>
         </div>
       </div>
@@ -159,86 +222,147 @@ const ForgotPassword = (props) => {
   );
 };
 const Register = (props) => {
-  const [name , setName] = useState(''); 
-  const [email, setEmail] = useState('');
-  const [Address, setAddress] = useState('');
-  const [PhoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [ConfirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== ConfirmPassword) {
-        setError("Passwords do not match");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-  }};
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!isValidPhoneNumber(phoneNumber)) {
+      setError("Please enter a valid phone number (10 digits only).");
+      return;
+    }
+    if (email.length > 50) {
+      setError("Email address exceeds the maximum character limit (50).");
+      return;
+    }
+    // Check if password matches confirm password
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    try {
+      const response = await axios.get("http://localhost:8000/users");
+      const usersData = response.data;
+      const existingUsers = usersData.find(user => user.email === email);
+      if (existingUsers) {
+        setError("User already exists. Please login.");
+        return;
+      }
+      const hashedPassword = hashSync(password);
+      const userId = uuidv4();
+
+      const user = {
+        id: userId,
+        name: name,
+        email: email,
+        address: address,
+        phoneNumber: phoneNumber,
+        password: hashedPassword, // Send hashed password to the server
+      };
+
+      await axios.post("http://localhost:8000/users", user);
+      props.onFormSwitch("Home");
+    } catch (error) {
+      console.error("Error registering user:", error);
+      // Handle error
+    }
+  };
+
   return (
     <div className="container sign-up-mode">
-        <div className="forms-container">
-            <div className="signin-signup">
-                <form method="POST" onSubmit={handleSubmit} className="sign-up-form">
-                    <h2 className="title">Sign up</h2>
-                    {error && <p className="error">{error}</p>}
-                    <div className="input-field">
-                    <i className="fas fa-user"></i>
-                    <input value = {name} onChange ={(e)=>setName(e.target.value)} type="text" placeholder="Full Name" />
-                    </div>
-                    <div className="input-field">
-                    <i className="fas fa-user"></i>
-                    <input value = {email} onChange ={(e)=>setEmail(e.target.value)} type="email" placeholder="Email" />
-                    </div>
-                    <div className="input-field">
-                    <i className="fas fa-map-marker-alt"></i>
-                    <input value = {Address} onChange ={(e)=>setAddress(e.target.value)} type="text" placeholder="Address" />
-                    </div>
-                    <div className="input-field">
-                    <i className="fas fa-mobile-alt"></i>
-                    <input value = {PhoneNumber} onChange ={(e)=>setPhoneNumber(e.target.value)} type="text" placeholder="Phone Number" />
-                    </div>
-                    <div className="input-field">
-                    <i className="fas fa-lock"></i>
-                    <input value = {password} onChange ={(e)=>setPassword(e.target.value)} type="password" placeholder="Password" />
-                    </div>
-                    <div className="input-field">
-                    <i className="fas fa-lock"></i>
-                    <input value = {ConfirmPassword} onChange ={(e)=>setConfirmPassword(e.target.value)} type="password" placeholder="Confirm Password" />
-                    </div>
-                    <input type="submit" className="btn" value="Sign up" onClick ={()=>props.onFormSwitch('Home')} />
-                    <p className="social-text">Or Sign up with social platforms</p>
-                    <div className="social-media">
-                    <a href="#" className="social-icon">
-                      <FontAwesomeIcon icon={faFacebookF} />
-                    </a>
-                    <a href="#" className="social-icon">
-                      <FontAwesomeIcon icon={faTwitter} />
-                    </a>
-                    <a href="#" className="social-icon">
-                      <FontAwesomeIcon icon={faGoogle} />
-                    </a>
-                    <a href="#" className="social-icon">
-                      <FontAwesomeIcon icon={faLinkedinIn} />
-                    </a>
-                    </div>
-                </form>
+      <div className="forms-container">
+        <div className="signin-signup">
+          <form method="POST" onSubmit={handleSubmit} className="sign-up-form">
+            <h2 className="title">Sign up</h2>
+            {error && <p className="error">{error}</p>}
+            <div className="input-field">
+              <i className="fas fa-user"></i>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Full Name"
+              />
             </div>
+            <div className="input-field">
+              <i className="fas fa-user"></i>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Email"
+              />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-map-marker-alt"></i>
+              <input
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                type="text"
+                placeholder="Address"
+              />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-mobile-alt"></i>
+              <input
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                type="text"
+                placeholder="Phone Number"
+              />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-lock"></i>
+              <input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                placeholder="Password"
+              />
+            </div>
+            <div className="input-field">
+              <i className="fas fa-lock"></i>
+              <input
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="password"
+                placeholder="Confirm Password"
+              />
+            </div>
+            <input
+              type="submit"
+              className="btn solid"
+              value="Sign up"
+              onClick={handleSubmit}
+            />
+            <p className="social-text">Or Sign up with social platforms</p>
+            <div className="social-media">
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faFacebookF} />
+              </a>
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faTwitter} />
+              </a>
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faGoogle} />
+              </a>
+              <a href="#" className="social-icon">
+                <FontAwesomeIcon icon={faLinkedinIn} />
+              </a>
+            </div>
+          </form>
         </div>
-        {/*<div className="panels-container">
-            <div className="panel right-panel">
-                <div className="content">
-                    <h3>One of us?</h3>
-                    <p>
-                    Already registered? then hop on & access our services.
-                    </p>
-                    <button className="btn transparent" id="sign-in-btn" onClick ={()=>props.onFormSwitch("Login")}>
-                    Sign in
-                    </button>
-                </div>
-            {/*<img src={register} className="image" alt="" />/}
-            </div>
-        </div>*/}
+      </div>
     </div>
   );
 };
-export{Login, ForgotPassword, Register};
+export { Login, ForgotPassword, Register };

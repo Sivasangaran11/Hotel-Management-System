@@ -3,6 +3,7 @@ import HomeImage from './assets/img/248.jpg';
 import AboutImage from './assets/img/about.jpg';
 import {Header,Footer} from './HAF.jsx'
 import './styles.css'
+import { Link } from 'react-router-dom';
 function HomePage() {
     return (
         <div>
@@ -14,8 +15,10 @@ function HomePage() {
                         <div className="home__data">
                             <h1 className="home__title">Welcome!<br/>Try our food</h1>
                             <h3 className="home__subtitle">Nothing brings people together like good food.</h3>
-                            <a href="#" className="button">View Menu</a>
-                            <a href="#" className="button">Reserve Table</a>
+                            <div className="button-container">
+                                <a href="#" className="button">View Menu</a>
+                                <Link to="/table" className="button">Reserve Table</Link>
+                            </div>
                         </div>
                         
                         <img src={HomeImage} alt="Home" className="home__img"/>

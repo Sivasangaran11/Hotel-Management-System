@@ -3,13 +3,16 @@ import './styles.css';
 import axios from 'axios';
 export const SelectedItemsContext = React.createContext();
 import Cart from './cart.jsx';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
 const Menu = (props) => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedItems, setSelectedItems] = useState([]);
-    const [showCart, setShowCart] = useState(false); // New state to toggle cart view
+    const [showCart, setShowCart] = useState(false);
 
     useEffect(() => {
         fetchItems();
@@ -44,6 +47,10 @@ const Menu = (props) => {
         setSelectedItems(updatedSelectedItems);
     };
 
+    const handleCartIconClick = () => {
+        setShowCart(!showCart); // Toggle the showCart state when the cart icon is clicked
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -51,13 +58,9 @@ const Menu = (props) => {
     if (error) {
         return <div>{error}</div>;
     }
-
-    const handleCartButtonClick = () => {
-        setShowCart(true); // Set showCart state to true when "Add to Cart" button is clicked
-    };
-
+    console.log(selectedItems);
     return (
-        <SelectedItemsContext.Provider value={{ selectedItems }}>
+        <SelectedItemsContext.Provider value={{ selectedItems, setSelectedItems }}>
             <section className="menu section bd-container" id="menu">
                 <h2 className="section-title">Menu</h2>
                 <div className="menu__container bd-grid">
@@ -73,12 +76,19 @@ const Menu = (props) => {
                             </div>
                         </div>
                     ))}
-                    <button className='button menu__button__' onClick={handleCartButtonClick}>Add to Cart</button>
                 </div>
             </section>
-            {showCart && <Cart />} {/* Render Cart component only when showCart state is true */}
+            {/* Cart icon */}
+            <Link to = "/cart">
+                <div className="cart-icon" onClick={handleCartIconClick}>
+                    <FontAwesomeIcon icon={faShoppingCart} />
+                </div>
+            </Link>
+            {/* Render Cart component based on showCart state */}
+            {showCart && <Cart  />}
         </SelectedItemsContext.Provider>
     );
 };
+
 
 export default Menu;
