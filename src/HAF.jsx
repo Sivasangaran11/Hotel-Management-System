@@ -45,21 +45,32 @@ function Header(props) {
                   </a>
                 </li>
               </Link>
-              <Link to="/Login">
-                {" "}
+
+              {/* Conditional rendering of Login and Register links */}
+              {!props.ISLoggedIn ? (
+                <>
+                  <Link to="/Login">
+                    <li className="nav__item">
+                      <a href="#" className="nav__link">
+                        Log in
+                      </a>
+                    </li>
+                  </Link>
+                  <Link to="/Register">
+                    <li className="nav__item">
+                      <a className="nav__link">Register</a>
+                    </li>{" "}
+                  </Link>
+                </>
+              ) : (
+                <Link to="/Login" onClick={() => props.LoginStatus(null)}>
                 <li className="nav__item">
-                  <a href="#" className="nav__link">
-                    Log in
-                  </a>
+                  <a className="nav__link">Log out</a>
                 </li>
               </Link>
-              <Link to="/Register">
-                <li className="nav__item">
-                  <a href="#" className="nav__link">
-                    Register
-                  </a>
-                </li>{" "}
-              </Link>
+    
+              )}
+
               <Link to="/Contact">
                 <li className="nav__item">
                   <a href="#" className="nav__link">
@@ -110,17 +121,17 @@ function Footer() {
             <h3 className="footer__title">Services</h3>
             <ul>
               <li>
-                <Link to ="/table">
-                <a href="#" className="footer__link">
-                  Table Reservation
-                </a>
+                <Link to="/table">
+                  <a href="#" className="footer__link">
+                    Table Reservation
+                  </a>
                 </Link>
               </li>
               <li>
-                <Link to = "/menu">
-                <a href="#" className="footer__link">
-                  Order Food
-                </a>
+                <Link to="/menu">
+                  <a href="#" className="footer__link">
+                    Order Food
+                  </a>
                 </Link>
               </li>
               <li>
@@ -139,18 +150,15 @@ function Footer() {
                   Event
                 </a>
               </li>
-              
+
               <li>
-              <Link to = "/contact">
-                <a
-                  href="#"
-                  className="footer__link"
-                >
-                  Contact us
-                </a>
+                <Link to="/contact">
+                  <a href="#" className="footer__link">
+                    Contact us
+                  </a>
                 </Link>
               </li>
-              
+
               <li>
                 <a href="#" className="footer__link">
                   Privacy policy

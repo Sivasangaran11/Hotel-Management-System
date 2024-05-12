@@ -1,13 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 import { BrowserRouter as Router} from "react-router-dom";
-import App from './App.jsx';
+import App from "./App.jsx";
 
 const Root = () => {
   return (
     <React.StrictMode>
       <Router>
-      <App/>
+        <App />
       </Router>
     </React.StrictMode>
   );
@@ -15,5 +15,5 @@ const Root = () => {
 
 ReactDOM.render(
   <Root />, // Render your Root component
-  document.getElementById('root')
+  document.getElementById("root")
 );
