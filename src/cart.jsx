@@ -1,11 +1,11 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './style-cart.css';
-import { SelectedItemsContext } from './Menu2.jsx';
 import { Link } from 'react-router-dom';
 
-const Cart = ({ totalAmount }) => {
-    const { selectedItems, setSelectedItems } = useContext(SelectedItemsContext);
+const Cart = (props) => {
+    const [selectedItems, setSelectedItems] = useState(props.CartItems);
     const [cartItems, setCartItems] = useState(selectedItems);
+    console.log(cartItems);
 
     useEffect(() => {
         // Update cartItems state whenever selectedItems context value changes
@@ -101,7 +101,7 @@ const Cart = ({ totalAmount }) => {
                         <div className="Subtotal">Sub-Total</div>
                         <div className="items"> {cartItems.length} items</div>
                     </div>
-                    <div className="total-amount">₹ {totalAmount}</div>
+                    <div className="total-amount">₹ 100</div>
                 </div>
                 <button className='button' type='submit'>Submit</button>
             </div>

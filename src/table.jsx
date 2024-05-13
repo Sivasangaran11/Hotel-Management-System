@@ -52,7 +52,6 @@ const Table = (props) => {
   ]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
-  const [confirmed, setConfirmed] = useState(false); // Track if reservation is confirmed
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]); // Track available time slots
   const [reserved, setReserved] = useState([false]); // Track reserved
 
@@ -116,13 +115,12 @@ const Table = (props) => {
   const handleReservation = async (event, tableNumber) => {
     event.preventDefault();
     setSelectedTable(tableNumber);
-    setConfirmed(false);
+    setSelectedTimeSlot("");
     setReserved(true);
   };
   const handleConfirmations = async (event, tableNumber) => {
     event.preventDefault();
-    setReserved(false);
-    setConfirmed(true);
+    setReserved(false)
     await reserveTable(tableNumber, selectedTimeSlot);
   };
 
@@ -140,13 +138,13 @@ const Table = (props) => {
       </thead>
       <tbody>
         {tables.map((table) => (
-          <tr key={table.number} style={{ backgroundColor: confirmed && selectedTable === table.number ? 'lightgreen' : 'inherit' }}>
+          <tr key={table.number} style={{ backgroundColor: reserved && selectedTable === table.number ? 'lightgreen' : 'inherit' }}>
             <td>{table.number}</td>
             <td>{table.time}</td>
             <td>{table.date}</td>
             <td>{table.accommodation}</td>
             <td>
-                {selectedTable === table.number && !confirmed && reserved? (
+                {selectedTable === table.number && reserved? (
                   <form onSubmit={(event) => handleConfirmations(event, table.number)}>
                     <button type="submit" className="button" >
                       Confirm

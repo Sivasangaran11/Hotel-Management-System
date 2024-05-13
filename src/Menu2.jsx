@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
 import axios from 'axios';
-export const SelectedItemsContext = React.createContext();
-import Cart from './cart.jsx';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+
 import { Link } from 'react-router-dom';
 
 const Menu = (props) => {
@@ -59,8 +56,8 @@ const Menu = (props) => {
         return <div>{error}</div>;
     }
     console.log(selectedItems);
+    props.selectedFood(selectedItems)
     return (
-        <SelectedItemsContext.Provider value={{ selectedItems, setSelectedItems }}>
             <section className="menu section bd-container" id="menu">
                 <h2 className="section-title">Menu</h2>
                 <div className="menu__container bd-grid">
@@ -78,13 +75,6 @@ const Menu = (props) => {
                     ))}
                 </div>
             </section>
-            {/* Cart icon */}
-                <div className="cart-icon" onClick={handleCartIconClick}>
-                    <FontAwesomeIcon icon={faShoppingCart} />
-                </div>
-            {/* Render Cart component based on showCart state */}
-            {showCart && <Cart  />}
-        </SelectedItemsContext.Provider>
     );
 };
 

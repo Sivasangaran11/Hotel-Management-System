@@ -236,6 +236,17 @@ img {
   font-size: 1.3rem;
   cursor: pointer;
 }
+.nav__link__icon {
+  transition: 0.3s;
+}
+
+.nav__link__icon:hover {
+  fill: var(--first-color);
+  cursor: pointer;
+  
+}
+
+
 
 /* Show menu */
 .show-menu {
