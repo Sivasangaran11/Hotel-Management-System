@@ -78,6 +78,7 @@ function Header(props) {
                   </a>
                 </li>
               </Link>
+              {props.TableVisibility &&(
               <li className="nav__item">
                 <div className="nav__link">
                   <svg
@@ -90,7 +91,8 @@ function Header(props) {
                     <path d="M46 28c1.103 0 2-.897 2-2v-2c0-1.103-.897-2-2-2H18c-1.103 0-2 .897-2 2v2c0 1.103.897 2 2 2h7v2c0 1.103.897 2 2 2h4v12h-2c-1.654 0-3 1.346-3 3v2a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-2c0-1.654-1.346-3-3-3h-2V32h4c1.103 0 2-.897 2-2v-2h7ZM36 47v1h-8v-1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1ZM18 24h28l.002 2H18v-2Zm19.002 6H27v-2h10l.002 2Z"></path>
                   </svg>
                 </div>
-              </li>
+              </li>)}
+              {props.CartVisibility &&(
               <Link to = "/cart">
               <li className="nav__item">
                 <div className="nav__link">
@@ -104,9 +106,11 @@ function Header(props) {
                     <path d="M14 36c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4zM2 4v4h4l7.19 15.17-2.7 4.9c-.31.58-.49 1.23-.49 1.93 0 2.21 1.79 4 4 4h24v-4H14.85c-.28 0-.5-.22-.5-.5 0-.09.02-.17.06-.24L16.2 26h14.9c1.5 0 2.81-.83 3.5-2.06l7.15-12.98c.16-.28.25-.61.25-.96a2 2 0 0 0-2-2H10.43l-1.9-4H2zm32 32c-2.21 0-3.98 1.79-3.98 4s1.77 4 3.98 4 4-1.79 4-4-1.79-4-4-4z"></path>
                     <path fill="none" d="M0 0h48v48H0z"></path>
                   </svg>
+                  <span className="cart-message">View Cart</span>
                 </div>
               </li>
               </Link>
+              )}
 
               <li>
                 <i className="bx bx-moon change-theme" id="theme-button"></i>

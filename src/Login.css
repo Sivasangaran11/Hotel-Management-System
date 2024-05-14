@@ -274,6 +274,7 @@ form.sign-in-form {
 }
 
 .container.sign-up-mode .signin-signup {
+  height: inherit;
   left: 25%;
 }
 

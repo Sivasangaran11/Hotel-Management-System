@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import "./style-cart.css";
 import { v4 as uuidv4 } from "uuid";
+
+
 const Menu = (props) => {
   const foodItems = [
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Barbecue Salad",
       price: 200,
       quantity: 0,
@@ -15,7 +17,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Salad with Fish",
       price: 200,
       quantity: 0,
@@ -23,7 +25,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Spinach Salad",
       price: 200,
       quantity: 0,
@@ -31,7 +33,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Fresh Salad",
       price: 200,
       quantity: 0,
@@ -39,7 +41,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Fried Noodles",
       price: 200,
       quantity: 0,
@@ -47,7 +49,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Roasted Chicken",
       price: 200,
       quantity: 0,
@@ -55,7 +57,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Cheese Pizza",
       price: 200,
       quantity: 0,
@@ -63,7 +65,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Barbecue Salad",
       price: 200,
       quantity: 0,
@@ -71,7 +73,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      id: uuidv4(),
+      foodId: uuidv4(),
       name: "Salad With Fish",
       price: 200,
       quantity: 0,
@@ -83,29 +85,33 @@ const Menu = (props) => {
   const [selectedItems, setSelectedItems] = useState([]);
 
   const addItemSelected = (itemId) => {
-    if (selectedItems.find((item) => item.id === itemId)) {
+    if (selectedItems.find((item) => item.foodId === itemId)) {
       return; // If item is already selected, do nothing
     }
-    const selectedItem = foodItems.find((item) => item.id === itemId);
-    setSelectedItems([...selectedItems, selectedItem]);
-  };
-
-  const removeItemSelected = (itemId) => {
-    const updatedSelectedItems = selectedItems.filter(
-      (item) => item.id !== itemId
-    );
+    const selectedItem = foodItems.find((item) => item.foodId === itemId);
+    const updatedSelectedItems = [...selectedItems, selectedItem];
     setSelectedItems(updatedSelectedItems);
+    sessionStorage.setItem("selectedItems", JSON.stringify(updatedSelectedItems));
+    props.Visible('cart');
   };
 
-  console.log(selectedItems);
-  props.selectedFood(selectedItems);
+  useEffect(() => {
+    const storedItems = sessionStorage.getItem("selectedItems");
+    if (storedItems) {
+      setSelectedItems(JSON.parse(storedItems));
+    }
+  }, []);
+
+  useEffect(() => {
+    props.selectedFood(selectedItems);
+  }, [selectedItems, props]);
 
   return (
     <section className="menu section bd-container" id="menu">
       <h2 className="section-title">Menu</h2>
       <div className="menu__container bd-grid">
         {foodItems.map((item) => (
-          <div key={item.id} className="menu__content">
+          <div key={item.foodId} className="menu__content">
             <img
               src={`src/assets/img/${item.source}`}
               alt=""
@@ -116,15 +122,9 @@ const Menu = (props) => {
             <div className="menu__order-container">
               <button
                 className="button menu__button__add"
-                onClick={() => addItemSelected(item.id)}
+                onClick={() => addItemSelected(item.foodId)}
               >
                 Add
-              </button>
-              <button
-                className="button menu__button__remove"
-                onClick={() => removeItemSelected(item.id)}
-              >
-                Remove
               </button>
             </div>
           </div>
@@ -133,69 +133,89 @@ const Menu = (props) => {
     </section>
   );
 };
+
+
 const Cart = (props) => {
   const [cartItems, setCartItems] = useState(props.CartItems);
   const [totalAmount, setTotalAmount] = useState(0);
+  const navigateTo = useNavigate();
 
   useEffect(() => {
-    setCartItems(props.CartItems);
+    const storedCartItems = sessionStorage.getItem("selectedItems");
+    if (storedCartItems) {
+      setCartItems(JSON.parse(storedCartItems));
+    }
   }, [props.CartItems]);
 
   useEffect(() => {
     // Recalculate total amount whenever cartItems change
-    const newTotalAmount = cartItems.reduce((total, item) => total + (item.quantity || 0) * item.price, 0);
+    const newTotalAmount = cartItems.reduce(
+      (total, item) => total + (item.quantity || 0) * item.price,
+      0
+    );
     setTotalAmount(newTotalAmount);
   }, [cartItems]);
 
   const incrementOrder = (itemId) => {
     const updatedItems = cartItems.map((item) => {
-      if (item.id === itemId) {
+      if (item.foodId === itemId) {
         const newOrderCount = (item.quantity || 0) + 1;
         return { ...item, quantity: newOrderCount };
       }
       return item;
     });
     setCartItems(updatedItems);
+    sessionStorage.setItem("selectedItems", JSON.stringify(updatedItems));
   };
 
   const decrementOrder = (itemId) => {
     const updatedItems = cartItems.map((item) => {
-      if (item.id === itemId) {
+      if (item.foodId === itemId) {
         const newOrderCount = Math.max((item.quantity || 0) - 1, 0);
         return { ...item, quantity: newOrderCount };
       }
       return item;
     });
     setCartItems(updatedItems);
+    sessionStorage.setItem("selectedItems", JSON.stringify(updatedItems));
   };
 
   const handleSubmission = async () => {
     try {
-      // Make a POST request to your JSON server endpoint
-      const response = await axios.post("http://localhost:8000/item", cartItems);
+      const orderId = uuidv4()
+      const orderItems = cartItems.map(item => ({
+        OrderId: orderId,
+        ...item,
+        reservee: props.userId
+      }));
+
+      // Send the array of items to the server
+      const response = await axios.post("http://localhost:8000/item", orderItems);
+      navigateTo('/congrats');
       console.log("Cart items submitted successfully:", response.data);
-      // Optionally, you can clear the cart items after submission
+
+      // Clear the cart items and session storage after submission
       setCartItems([]);
+      sessionStorage.removeItem("selectedItems");
+      alert(`Are you sure you want Confirm your Order?`);
     } catch (error) {
       console.error("Error submitting cart items:", error);
     }
   };
+
   return (
-    <div>
     <div className="CartContainer">
       <div className="Header">
         <h3 className="Heading">Cart</h3>
-        <a href="/menu_page" className="back">
-          <Link to="/menu">
-            <h5 className="Action">
-              Back to Menu <i className="bx bxs-food-menu"></i>
-            </h5>
-          </Link>
-        </a>
+        <Link to="/menu" className="back">
+          <h5 className="Action">
+            Back to Menu <i className="bx bxs-food-menu"></i>
+          </h5>
+        </Link>
       </div>
 
       {cartItems.map((selectedItem) => (
-        <div className="Cart-Items" key={selectedItem.id}>
+        <div className="Cart-Items" key={selectedItem.foodId}>
           <div className="image-box">
             <img
               src={`src/assets/img/${selectedItem.source}`}
@@ -212,16 +232,16 @@ const Cart = (props) => {
           <div className="counter">
             <button
               className="btn"
-              onClick={() => incrementOrder(selectedItem.id)}
+              onClick={() => decrementOrder(selectedItem.foodId)}
             >
-              +
+              -
             </button>
             <div className="count">{selectedItem.quantity}</div>
             <button
               className="btn"
-              onClick={() => decrementOrder(selectedItem.id)}
+              onClick={() => incrementOrder(selectedItem.foodId)}
             >
-              -
+              +
             </button>
           </div>
           <div className="prices">
@@ -236,19 +256,14 @@ const Cart = (props) => {
         <div className="total">
           <div>
             <div className="Subtotal">Sub-Total</div>
-            <div className="items"> {cartItems.length} items</div>
+            <div className="items">{cartItems.length} items</div>
           </div>
-          <div className="total-amount">{totalAmount}</div>
+          <div className="total-amount">₹ {totalAmount}</div>
         </div>
-        <button
-          className="button"
-          type="submit"
-          onClick={() => handleSubmission(cartItems)}
-        >
+        <button className="button" type="submit" onClick={handleSubmission}>
           Submit
         </button>
       </div>
-    </div>
     </div>
   );
 };
