@@ -6,6 +6,7 @@ import {
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
+import './styles.css';
 
 function Header(props) {
   return (
@@ -78,7 +79,7 @@ function Header(props) {
                 </li>
               </Link>
               <li className="nav__item">
-                <div className="nav__link__icon">
+                <div className="nav__link">
                   <svg
                     width="24"
                     height="24"
@@ -92,7 +93,7 @@ function Header(props) {
               </li>
               <Link to = "/cart">
               <li className="nav__item">
-                <div className="nav__link__icon">
+                <div className="nav__link">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"

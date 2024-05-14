@@ -7,8 +7,8 @@ import {
 } from "react-router-dom";
 import { Login, ForgotPassword, Register } from "./LoginPage.jsx";
 import { HomePage, AboutPage, Contact } from "./Home.jsx";
-import Menu from "./Menu2.jsx";
-import Cart from "./cart.jsx";
+import {Menu, Cart} from "./Menu.jsx";
+//import Cart from "./cart.jsx";
 import Table from "./table.jsx";
 import { Header, Footer } from "./HAF.jsx";
 
@@ -22,10 +22,8 @@ function App() {
     // Set isLoggedIn to true after successful login
     setIsLoggedIn(true);
   };
-
   const updateFood = (newFood) => {
     setSelectedFoodItem(newFood);
-    console.log(SelectedFoodItem);
   };
 
   const location = useLocation();

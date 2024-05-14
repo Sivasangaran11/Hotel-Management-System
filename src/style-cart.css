@@ -1,13 +1,15 @@
 
+
 .CartContainer{
-	position:absolute;
+	display:inline-table;
+	margin-top: 100px ;
+	margin-left: 100px;
 	width: 80%;
 	height: 90%;
 	background-color: #ffffff;
     border-radius: 20px;
     box-shadow: 0px 10px 20px #1687d933;
-    justify-content: center; /* Align horizontally in the center */
-    align-items: center;
+	
 }
 
 .Header{
@@ -69,7 +71,7 @@
 	color: #202020;
 }
 .subtitle{
-	line-height: 100px;
+	line-height: 10px;
 	font-size: 18px;
 	font-family: 'Open Sans';
 	font-weight: 600;

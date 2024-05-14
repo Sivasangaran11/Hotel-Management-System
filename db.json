@@ -1,76 +1,50 @@
 {
   "item": [
     {
-      "id": "1",
-      "name": "Barbecue Salad",
-      "description": "Delicious Dish",
-      "price": 200,
-      "source": "plate1.png",
-      "order": 33
+      "0": {
+        "id": "f6069dfd-47c0-473b-94ff-48aa2b2799fe",
+        "name": "Barbecue Salad",
+        "price": 200,
+        "quantity": 0,
+        "source": "plate1.png",
+        "reservee": null
+      },
+      "1": {
+        "id": "1a7f9db2-3ebf-45b3-8e9a-c3a8c673b9d0",
+        "name": "Salad with Fish",
+        "price": 200,
+        "quantity": 0,
+        "source": "plate2.png",
+        "reservee": null
+      },
+      "2": {
+        "id": "22839119-3e1c-4268-8bbb-afbd4ba1c3c7",
+        "name": "Spinach Salad",
+        "price": 200,
+        "quantity": 0,
+        "source": "plate3.png",
+        "reservee": null
+      },
+      "id": "e05d"
     },
     {
-      "id": "2",
-      "name": "Salad with Fish",
-      "description": "Delicious Dish",
-      "price": 150,
-      "source": "plate2.png",
-      "order": 27
-    },
-    {
-      "id": "3",
-      "name": "Spinach Salad",
-      "description": "Delicious Dish",
-      "price": 100,
-      "source": "plate3.png",
-      "order": 15
-    },
-    {
-      "id": "4",
-      "name": "Fresh Salad",
-      "description": "Delicious Dish",
-      "price": 200,
-      "source": "salad.png",
-      "order": 14
-    },
-    {
-      "id": "5",
-      "name": "Fried Noodles",
-      "description": "Delicious Dish",
-      "price": 200,
-      "source": "noodles.png",
-      "order": 12
-    },
-    {
-      "id": "6",
-      "name": "Roasted Chicken",
-      "description": "Delicious Dish",
-      "price": 300,
-      "source": "chicken.png",
-      "order": 1
-    },
-    {
-      "id": "7",
-      "name": "Cheese Pizza",
-      "description": "Delicious Dish",
-      "price": 200,
-      "source": "pizza.png",
-      "order": 12
-    },
-    {
-      "id": "8",
-      "name": "Barbecue Salad",
-      "description": "Delicious Dish",
-      "price": 200,
-      "source": "plate1.png",
-      "order": 20
-    },
-    {
-      "id": "9",
-      "name": "Salad with Fish",
-      "description": "Delicious Dish",
-      "price": 150,
-      "source": "plate2.png",
-      "order": 30
+      "0": {
+        "id": "cbf841f1-173e-44e5-be47-48ac71207f23",
+        "name": "Fried Noodles",
+        "price": 200,
+        "quantity": 1,
+        "source": "noodles.png",
+        "reservee": null
+      },
+      "1": {
+        "id": "aba0fb3b-cb24-4fcd-902e-3a656011df7f",
+        "name": "Cheese Pizza",
+        "price": 200,
+        "quantity": 1,
+        "source": "pizza.png",
+        "reservee": null
+      },
+      "id": "5fce"
     }
   ],
   "users": [
@@ -163,6 +137,14 @@
       "date": "5/14/2024",
       "accommodation": "4",
       "reservee": null
+    },
+    {
+      "id": "a79a2193-c258-4388-97b9-bfb1b8679469",
+      "number": 1,
+      "time": "9am-10am",
+      "date": "5/15/2024",
+      "accommodation": "4",
+      "reservee": "b4de6afd-920e-466a-abb7-122eca8361e7"
     }
   ]
 }

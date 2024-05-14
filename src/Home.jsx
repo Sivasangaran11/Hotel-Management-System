@@ -52,8 +52,7 @@ function HomePage(props) {
 }
 function AboutPage() {
   return (
-    <div>
-      {/*<Header/>*/}
+    <main className="l-main">
       <section className="about section bd-container" id="about">
         <div className="about__container bd-grid">
           <div className="about__data">
@@ -75,7 +74,7 @@ function AboutPage() {
           <img src={AboutImage} alt="" className="about__img" />
         </div>
       </section>
-    </div>
+    </main>
   );
 }
 function Contact() {
@@ -105,9 +104,6 @@ function Contact() {
           </div>
         </div>
       </section>
-      {/*<FOOTER> */}
-      <Footer />
-      {/*<FOOTER ENDS>*/}
     </div>
   );
 }
