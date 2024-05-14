@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from "uuid";
 //import argon2 from 'argon2';
 //import bcrypt from "bcrypt";
 import { hashSync, compareSync } from "bcrypt-ts";
+import { Link, useNavigate } from "react-router-dom";
 //import './FTP.css';
 //import register from './assets/img/register.svg';
 const isValidEmail = (email) => {
@@ -32,7 +33,7 @@ const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+  const navigateTo = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isValidEmail(email)) {
@@ -67,7 +68,7 @@ const Login = (props) => {
         // Display alert message if user does not exist
         window.alert("User does not exist. Please register.");
         // Redirect to register page
-        props.onFormSwitch("Register");
+        navigateTo('/Register');
         return;
       }
 
@@ -79,14 +80,16 @@ const Login = (props) => {
         return;
       }
 
-      // Optionally, handle successful login (e.g., redirect to another page)
-      props.onFormSwitch("Home");
+      // Call props.currentUser with the user ID after successful login
+      props.currentUser(user.id);
+      navigateTo('/');
       console.log("Login successful!");
     } catch (error) {
       console.error("Error logging in:", error);
       setError("Failed to login. Please try again later.");
     }
   };
+
   return (
     <div className="container">
       <div className="forms-container">
@@ -112,12 +115,7 @@ const Login = (props) => {
                 placeholder="Password"
               />
             </div>
-            <input
-              type="submit"
-              value="Login"
-              className="btn solid"
-              onClick={handleSubmit}
-            />
+            <input type="submit" value="Login" className="btn solid" onClick={handleSubmit}/>
             <p className="social-text">Or Sign in with social platforms</p>
             <div className="social-media">
               <a href="#" className="social-icon">
@@ -141,13 +139,11 @@ const Login = (props) => {
           <div className="content">
             <h3>New here?</h3>
             <p>Register yourself to access our services.</p>
-            <button
-              className="btn transparent"
-              id="sign-up-btn"
-              onClick={() => props.onFormSwitch("Register")}
-            >
-              Sign up
-            </button>
+            <Link to="/Register">
+              <button className="btn transparent" id="sign-up-btn">
+                Sign up
+              </button>
+            </Link>
           </div>
           <img src={log} className="image" alt="" />
         </div>
@@ -209,12 +205,12 @@ const ForgotPassword = (props) => {
                 placeholder="Confirm New Password"
               />
             </div>
+            <Link to="login">
             <input
               type="submit"
               value="Submit"
               className="btn solid"
-              onClick={() => props.onFormSwitch("login")}
-            />
+            /></Link>
           </form>
         </div>
       </div>
@@ -229,6 +225,7 @@ const Register = (props) => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const navigateTo = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -252,9 +249,11 @@ const Register = (props) => {
     try {
       const response = await axios.get("http://localhost:8000/users");
       const usersData = response.data;
-      const existingUsers = usersData.find(user => user.email === email);
+      const existingUsers = usersData.find((user) => user.email === email);
       if (existingUsers) {
         setError("User already exists. Please login.");
+        window.alert("User already exists. Please login.");
+        navigateTo('/Login');
         return;
       }
       const hashedPassword = hashSync(password);
@@ -270,7 +269,7 @@ const Register = (props) => {
       };
 
       await axios.post("http://localhost:8000/users", user);
-      props.onFormSwitch("Home");
+      navigateTo('/Login');
     } catch (error) {
       console.error("Error registering user:", error);
       // Handle error
