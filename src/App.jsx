@@ -6,6 +6,7 @@ import { Menu, Cart } from "./Menu.jsx";
 import Table from "./table.jsx";
 import { Header, Footer } from "./HAF.jsx";
 import CongratsPage from "./Congrats.jsx";
+import ServicesSection from "./service.jsx";
 
 function App() {
   // Initialize state with local storage data or default values
@@ -104,6 +105,7 @@ function App() {
           element={<Table userId={userID} Visible={toggleVisibility} />}
         />
         <Route path="/About" element={<AboutPage />} />
+        <Route path="/Services" element={<ServicesSection />} />
         <Route path="/Contact" element={<Contact />} />
         <Route path="/Login" element={<Login currentUser={updateUser} />} />
         <Route path="/Register" element={<Register />} />

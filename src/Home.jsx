@@ -63,7 +63,7 @@ function AboutPage() {
             <p className="about__description">
               We cook the best food in the entire city, with excellent customer
               service, the best meals and at the best price, visit us and Don't
-              forgot to Pay us a decent amount of money cause we are the best
+              forgot to Pay us a decent amount of money cause we are one of the best
               south indian food Restaurant🤪{" "}
             </p>
             <a href="#" className="button">
