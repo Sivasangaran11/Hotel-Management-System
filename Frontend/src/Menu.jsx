@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 const Menu = (props) => {
   const foodItems = [
     {
-      foodId: uuidv4(),
+      foodId: '1',
       name: "Barbecue Salad",
       price: 200,
       quantity: 0,
@@ -17,7 +17,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '2',
       name: "Salad with Fish",
       price: 200,
       quantity: 0,
@@ -25,7 +25,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '3',
       name: "Spinach Salad",
       price: 200,
       quantity: 0,
@@ -33,7 +33,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '4',
       name: "Fresh Salad",
       price: 200,
       quantity: 0,
@@ -41,7 +41,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '5',
       name: "Fried Noodles",
       price: 200,
       quantity: 0,
@@ -49,7 +49,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '6',
       name: "Roasted Chicken",
       price: 200,
       quantity: 0,
@@ -57,7 +57,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '7',
       name: "Cheese Pizza",
       price: 200,
       quantity: 0,
@@ -65,7 +65,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '8',
       name: "Barbecue Salad",
       price: 200,
       quantity: 0,
@@ -73,7 +73,7 @@ const Menu = (props) => {
       reservee: null,
     },
     {
-      foodId: uuidv4(),
+      foodId: '9',
       name: "Salad With Fish",
       price: 200,
       quantity: 0,
@@ -81,24 +81,28 @@ const Menu = (props) => {
       reservee: null,
     },
   ];
-
   const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
 
   const addItemSelected = (itemId) => {
-    if (selectedItems.find((item) => item.foodId === itemId)) {
-      return; // If item is already selected, do nothing
+    if (!selectedItemIds.includes(itemId)) {
+      const selectedItem = foodItems.find((item) => item.foodId === itemId);
+      const updatedSelectedItems = [...selectedItems, selectedItem];
+      const updatedSelectedItemIds = [...selectedItemIds, itemId];
+      setSelectedItems(updatedSelectedItems);
+      setSelectedItemIds(updatedSelectedItemIds);
+      sessionStorage.setItem("selectedItems", JSON.stringify(updatedSelectedItems));
+      props.Visible('cart');
+      console.log(selectedItemIds)
+      
     }
-    const selectedItem = foodItems.find((item) => item.foodId === itemId);
-    const updatedSelectedItems = [...selectedItems, selectedItem];
-    setSelectedItems(updatedSelectedItems);
-    sessionStorage.setItem("selectedItems", JSON.stringify(updatedSelectedItems));
-    props.Visible('cart');
   };
 
   useEffect(() => {
     const storedItems = sessionStorage.getItem("selectedItems");
     if (storedItems) {
       setSelectedItems(JSON.parse(storedItems));
+      setSelectedItemIds(JSON.parse(storedItems).map(item => item.foodId));
     }
   }, []);
 
@@ -120,12 +124,17 @@ const Menu = (props) => {
             <h3 className="menu__name">{item.name}</h3>
             <span className="menu__price">₹{item.price}</span>
             <div className="menu__order-container">
-              <button
-                className="button menu__button__add"
-                onClick={() => addItemSelected(item.foodId)}
-              >
-                Add
-              </button>
+              {!selectedItemIds.includes(item.foodId) ? (
+                
+                <button
+                  className="button menu__button__add"
+                  onClick={() => addItemSelected(item.foodId)}
+                >
+                  Add
+                </button>
+              ) : (
+                <button className="button menu__button_add">Added</button>
+              )}
             </div>
           </div>
         ))}

@@ -1,0 +1,48 @@
+{
+  "name": "hotelmanagementsystem",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npm-run-all --parallel vite json-server",
+    "vite": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "json-server": "json-server --watch db.json --port 8000"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-brands-svg-icons": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@fortawesome/vue-fontawesome": "^3.0.6",
+    "@remix-run/dev": "^2.9.1",
+    "argon2": "^0.40.1",
+    "aws-sdk": "^2.1598.0",
+    "axios": "^1.6.7",
+    "bcrypt": "^5.1.1",
+    "bcrypt-ts": "^5.0.2",
+    "crypto-js": "^4.2.0",
+    "json-server": "^1.0.0-alpha.23",
+    "mock-aws-s3": "^4.0.2",
+    "nock": "^13.5.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.56",
+    "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "npm-run-all": "^4.1.5",
+    "vite": "^5.1.4",
+    "vite-tsconfig-paths": "^4.3.2"
+  }
+}

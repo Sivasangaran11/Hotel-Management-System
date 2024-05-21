@@ -53,7 +53,7 @@ function HomePage(props) {
 function AboutPage() {
   return (
     <main className="l-main">
-      <section className="about section bd-container" id="about">
+      <section className="About section bd-container" id="about">
         <div className="about__container bd-grid">
           <div className="about__data">
             <span className="section-subtitle about__initial">About us</span>
