@@ -9,7 +9,6 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import "./Login.css";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 //import SHA256 from 'crypto-js/sha256';
 //import CryptoJS from 'crypto-js';
 //import argon2 from 'argon2';
@@ -58,7 +57,7 @@ const Login = (props) => {
 
     try {
       // Fetch user data from the server
-      const response = await axios.get("http://localhost:8000/users");
+      const response = await axios.get("http://localhost:3000/api/users");
       const usersData = response.data;
 
       // Find user by email in the fetched data
@@ -81,7 +80,7 @@ const Login = (props) => {
       }
 
       // Call props.currentUser with the user ID after successful login
-      props.currentUser(user.id);
+      props.currentUser(user._id);
       navigateTo('/');
       console.log("Login successful!");
     } catch (error) {
@@ -247,7 +246,7 @@ const Register = (props) => {
       return;
     }
     try {
-      const response = await axios.get("http://localhost:8000/users");
+      const response = await axios.get("http://localhost:3000/api/users");
       const usersData = response.data;
       const existingUsers = usersData.find((user) => user.email === email);
       if (existingUsers) {
@@ -257,10 +256,8 @@ const Register = (props) => {
         return;
       }
       const hashedPassword = hashSync(password);
-      const userId = uuidv4();
 
       const user = {
-        id: userId,
         name: name,
         email: email,
         address: address,
@@ -268,7 +265,7 @@ const Register = (props) => {
         password: hashedPassword, // Send hashed password to the server
       };
 
-      await axios.post("http://localhost:8000/users", user);
+      await axios.post("http://localhost:3000/api/users", user);
       navigateTo('/Login');
     } catch (error) {
       console.error("Error registering user:", error);

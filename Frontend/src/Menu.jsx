@@ -1,139 +1,80 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import axios from "axios";
-import { Link, useNavigate  } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./style-cart.css";
-import { v4 as uuidv4 } from "uuid";
 
 
 const Menu = (props) => {
-  const foodItems = [
-    {
-      foodId: '1',
-      name: "Barbecue Salad",
-      price: 200,
-      quantity: 0,
-      source: "plate1.png",
-      reservee: null,
-    },
-    {
-      foodId: '2',
-      name: "Salad with Fish",
-      price: 200,
-      quantity: 0,
-      source: "plate2.png",
-      reservee: null,
-    },
-    {
-      foodId: '3',
-      name: "Spinach Salad",
-      price: 200,
-      quantity: 0,
-      source: "plate3.png",
-      reservee: null,
-    },
-    {
-      foodId: '4',
-      name: "Fresh Salad",
-      price: 200,
-      quantity: 0,
-      source: "salad.png",
-      reservee: null,
-    },
-    {
-      foodId: '5',
-      name: "Fried Noodles",
-      price: 200,
-      quantity: 0,
-      source: "noodles.png",
-      reservee: null,
-    },
-    {
-      foodId: '6',
-      name: "Roasted Chicken",
-      price: 200,
-      quantity: 0,
-      source: "chicken.png",
-      reservee: null,
-    },
-    {
-      foodId: '7',
-      name: "Cheese Pizza",
-      price: 200,
-      quantity: 0,
-      source: "pizza.png",
-      reservee: null,
-    },
-    {
-      foodId: '8',
-      name: "Barbecue Salad",
-      price: 200,
-      quantity: 0,
-      source: "plate1.png",
-      reservee: null,
-    },
-    {
-      foodId: '9',
-      name: "Salad With Fish",
-      price: 200,
-      quantity: 0,
-      source: "plate2.png",
-      reservee: null,
-    },
-  ];
+  const [foodItems, setFoodItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
 
-  const addItemSelected = (itemId) => {
-    if (!selectedItemIds.includes(itemId)) {
-      const selectedItem = foodItems.find((item) => item.foodId === itemId);
-      const updatedSelectedItems = [...selectedItems, selectedItem];
-      const updatedSelectedItemIds = [...selectedItemIds, itemId];
-      setSelectedItems(updatedSelectedItems);
-      setSelectedItemIds(updatedSelectedItemIds);
-      sessionStorage.setItem("selectedItems", JSON.stringify(updatedSelectedItems));
-      props.Visible('cart');
-      console.log(selectedItemIds)
-      
-    }
-  };
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/menu")
+      .then((response) => {
+        setFoodItems(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching food items:", error);
+      });
+  }, []);
 
   useEffect(() => {
     const storedItems = sessionStorage.getItem("selectedItems");
     if (storedItems) {
-      setSelectedItems(JSON.parse(storedItems));
-      setSelectedItemIds(JSON.parse(storedItems).map(item => item.foodId));
+      const parsedItems = JSON.parse(storedItems);
+      setSelectedItems(parsedItems);
+      setSelectedItemIds(parsedItems.map((item) => item._id));
     }
   }, []);
 
   useEffect(() => {
     props.selectedFood(selectedItems);
-  }, [selectedItems, props]);
+  }, [selectedItems]);
+
+  const addItemSelected = (itemId) => {
+    if (!selectedItemIds.includes(itemId)) {
+      const selectedItem = foodItems.find((item) => item._id === itemId);
+      if (selectedItem) {
+        selectedItem.quantity = 1; // Set initial quantity to 1
+        const updatedSelectedItems = [...selectedItems, selectedItem];
+        const updatedSelectedItemIds = [...selectedItemIds, itemId];
+        setSelectedItems(updatedSelectedItems);
+        setSelectedItemIds(updatedSelectedItemIds);
+        sessionStorage.setItem(
+          "selectedItems",
+          JSON.stringify(updatedSelectedItems)
+        );
+        props.VisibleCart(true);
+      }
+    }
+  };
 
   return (
     <section className="menu section bd-container" id="menu">
       <h2 className="section-title">Menu</h2>
       <div className="menu__container bd-grid">
         {foodItems.map((item) => (
-          <div key={item.foodId} className="menu__content">
+          <div key={item._id} className="menu__content">
             <img
               src={`src/assets/img/${item.source}`}
-              alt=""
+              alt={item.name}
               className="menu__img"
             />
-            <h3 className="menu__name">{item.name}</h3>
+            <h3 className="menu__name">{item.ItemName}</h3>
             <span className="menu__price">₹{item.price}</span>
             <div className="menu__order-container">
-              {!selectedItemIds.includes(item.foodId) ? (
-                
+              {!selectedItemIds.includes(item._id) ? (
                 <button
                   className="button menu__button__add"
-                  onClick={() => addItemSelected(item.foodId)}
+                  onClick={() => addItemSelected(item._id)}
                 >
                   Add
                 </button>
               ) : (
-                <button className="button menu__button_add">Added</button>
+                <button className="button menu__button_added">Added</button>
               )}
             </div>
           </div>
@@ -143,10 +84,10 @@ const Menu = (props) => {
   );
 };
 
-
 const Cart = (props) => {
-  const [cartItems, setCartItems] = useState(props.CartItems);
+  const [cartItems, setCartItems] = useState([]);
   const [totalAmount, setTotalAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigateTo = useNavigate();
 
   useEffect(() => {
@@ -154,10 +95,9 @@ const Cart = (props) => {
     if (storedCartItems) {
       setCartItems(JSON.parse(storedCartItems));
     }
-  }, [props.CartItems]);
+  }, []);
 
   useEffect(() => {
-    // Recalculate total amount whenever cartItems change
     const newTotalAmount = cartItems.reduce(
       (total, item) => total + (item.quantity || 0) * item.price,
       0
@@ -165,50 +105,55 @@ const Cart = (props) => {
     setTotalAmount(newTotalAmount);
   }, [cartItems]);
 
-  const incrementOrder = (itemId) => {
-    const updatedItems = cartItems.map((item) => {
-      if (item.foodId === itemId) {
-        const newOrderCount = (item.quantity || 0) + 1;
-        return { ...item, quantity: newOrderCount };
-      }
-      return item;
-    });
+  const updateCartItems = (updatedItems) => {
     setCartItems(updatedItems);
     sessionStorage.setItem("selectedItems", JSON.stringify(updatedItems));
   };
 
-  const decrementOrder = (itemId) => {
+  const changeOrderQuantity = (itemId, change) => {
     const updatedItems = cartItems.map((item) => {
-      if (item.foodId === itemId) {
-        const newOrderCount = Math.max((item.quantity || 0) - 1, 0);
+      if (item._id === itemId) {
+        const newOrderCount = Math.max((item.quantity || 0) + change, 0);
         return { ...item, quantity: newOrderCount };
       }
       return item;
     });
-    setCartItems(updatedItems);
-    sessionStorage.setItem("selectedItems", JSON.stringify(updatedItems));
+    updateCartItems(updatedItems);
+  };
+
+  const removeItem = (itemId) => {
+    const updatedItems = cartItems.filter((item) => item._id !== itemId);
+    updateCartItems(updatedItems);
   };
 
   const handleSubmission = async () => {
+    setLoading(true);
     try {
-      const orderId = uuidv4()
-      const orderItems = cartItems.map(item => ({
-        OrderId: orderId,
-        ...item,
-        reservee: props.userId
+      const orderItems = cartItems.map((item) => ({
+        foodId: item._id,
+        name: item.ItemName, // ensure the field name matches the schema
+        price: item.price,
+        quantity: item.quantity,
+        source: item.source,
+        reservee: props.userId,
       }));
-
-      // Send the array of items to the server
-      const response = await axios.post("http://localhost:8000/item", orderItems);
-      navigateTo('/congrats');
+      const response = await axios.post(
+        "http://localhost:3000/api/cart",
+        orderItems
+      );
       console.log("Cart items submitted successfully:", response.data);
 
-      // Clear the cart items and session storage after submission
       setCartItems([]);
       sessionStorage.removeItem("selectedItems");
-      alert(`Are you sure you want Confirm your Order?`);
+      props.VisibleCart(false);
+
+      alert(`Your order has been confirmed!`);
+      navigateTo("/congrats");
     } catch (error) {
       console.error("Error submitting cart items:", error);
+      alert(`Failed to submit your order. Please try again.`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -223,44 +168,53 @@ const Cart = (props) => {
         </Link>
       </div>
 
-      {cartItems.map((selectedItem) => (
-        <div className="Cart-Items" key={selectedItem.foodId}>
-          <div className="image-box">
-            <img
-              src={`src/assets/img/${selectedItem.source}`}
-              alt=""
-              className="menu__img"
-            />
-          </div>
+      {cartItems.length > 0 ? (
+        cartItems.map((selectedItem) => (
+          <div className="Cart-Items" key={selectedItem._id}>
+            <div className="image-box">
+              <img
+                src={`src/assets/img/${selectedItem.source}`}
+                alt={selectedItem.name}
+                className="menu__img"
+              />
+            </div>
 
-          <div className="about">
-            <h1 className="title">{selectedItem.name}</h1>
-            <h3 className="subtitle">{selectedItem.description}</h3>
-          </div>
+            <div className="about">
+              <h1 className="title">{selectedItem.ItemName}</h1>
+              <h3 className="subtitle">{selectedItem.description}</h3>
+            </div>
 
-          <div className="counter">
-            <button
-              className="btn"
-              onClick={() => decrementOrder(selectedItem.foodId)}
-            >
-              -
-            </button>
-            <div className="count">{selectedItem.quantity}</div>
-            <button
-              className="btn"
-              onClick={() => incrementOrder(selectedItem.foodId)}
-            >
-              +
-            </button>
-          </div>
-          <div className="prices">
-            <div className="amount">₹ {selectedItem.price}</div>
-            <div className="remove">
-              <i className="bx bxs-trash-alt"></i>
+            <div className="counter">
+              <button
+                className="btn"
+                onClick={() => changeOrderQuantity(selectedItem._id, -1)}
+                disabled={selectedItem.quantity <= 0}
+              >
+                -
+              </button>
+              <div className="count">{selectedItem.quantity}</div>
+              <button
+                className="btn"
+                onClick={() => changeOrderQuantity(selectedItem._id, 1)}
+              >
+                +
+              </button>
+            </div>
+            <div className="prices">
+              <div className="amount">₹ {selectedItem.price}</div>
+              <div
+                className="remove"
+                onClick={() => removeItem(selectedItem._id)}
+              >
+                <i className="bx bxs-trash-alt"></i>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))
+      ) : (
+        <div className="empty-cart">Your cart is empty</div>
+      )}
+
       <div className="checkout">
         <div className="total">
           <div>
@@ -269,8 +223,13 @@ const Cart = (props) => {
           </div>
           <div className="total-amount">₹ {totalAmount}</div>
         </div>
-        <button className="button" type="submit" onClick={handleSubmission}>
-          Submit
+        <button
+          className="button"
+          type="submit"
+          onClick={handleSubmission}
+          disabled={loading || cartItems.length === 0}
+        >
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

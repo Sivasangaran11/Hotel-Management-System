@@ -8,7 +8,9 @@ const {
   getCartItems,
   getCartItemById,
   updateCartItem,
-  deleteCartItem
+  deleteCartItem,
+  reserveTable,
+  getAllTables
 } = require("./Controllers");
 
 const router = express.Router();
@@ -27,5 +29,11 @@ router.get('/cart', getCartItems);
 router.get('/cart/:id', getCartItemById);
 router.put('/cart/:id', updateCartItem);
 router.delete('/cart/:id', deleteCartItem);
+
+//Table routes
+
+router.post('/table', reserveTable);
+router.get('/table', getAllTables);
+
 
 module.exports = router;

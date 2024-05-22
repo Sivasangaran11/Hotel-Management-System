@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./Routes");
+const cors = require("cors"); // Import cors module
 
 const app = express();
 app.use(express.json());
@@ -13,9 +14,12 @@ mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
 });
 
+// Enable CORS
+app.use(cors());
+
 app.use("/api", routes);
 
-const PORT = 8000;
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

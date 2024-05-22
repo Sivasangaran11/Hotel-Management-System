@@ -22,11 +22,38 @@ const CartItemSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   quantity: { type: Number, required: true },
   source: { type: String, required: true },
-  reservee: { type: String, required: true }
+  reservee: { type: String, required: true },
+});
+
+const TableSchema = new mongoose.Schema({
+  number: {
+    type: Number,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  accommodation: {
+    type: String,
+    required: true,
+  },
+  reservee: {
+    type: String,
+    required: true,
+  },
+  reserved: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const User = mongoose.model("User", userSchema);
 const FoodItem = mongoose.model("FoodItem", foodItemSchema);
 const CartItem = mongoose.model("CartItem", CartItemSchema);
-
-module.exports = { User, FoodItem, CartItem };
+const Table = mongoose.model("Table", TableSchema);
+module.exports = { User, FoodItem, CartItem, Table };

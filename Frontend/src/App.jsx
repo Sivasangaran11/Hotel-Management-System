@@ -12,30 +12,26 @@ function App() {
   // Initialize state with local storage data or default values
   const [userID, setUserID] = useState(localStorage.getItem("userID") || null);
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem("isLoggedIn") === "true" || false
+    localStorage.getItem("isLoggedIn") === "true"
   );
-  const [SelectedFoodItem, setSelectedFoodItem] = useState(
+  const [selectedFoodItem, setSelectedFoodItem] = useState(
     JSON.parse(localStorage.getItem("selectedFood")) || []
   );
   const [isVisibleTable, setIsVisibleTable] = useState(
-    localStorage.getItem("isVisibleTable") === "true" || false
+    localStorage.getItem("isVisibleTable") === "true"
   );
   const [isVisibleCart, setIsVisibleCart] = useState(
-    localStorage.getItem("isVisibleCart") === "true" || false
+    localStorage.getItem("isVisibleCart") === "true"
   );
 
   // Effect to store state data in local storage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("userID", userID);
-  }, [userID]);
-
   useEffect(() => {
     localStorage.setItem("isLoggedIn", isLoggedIn);
   }, [isLoggedIn]);
 
   useEffect(() => {
-    localStorage.setItem("selectedFood", JSON.stringify(SelectedFoodItem));
-  }, [SelectedFoodItem]);
+    localStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
+  }, [selectedFoodItem]);
 
   useEffect(() => {
     localStorage.setItem("isVisibleTable", isVisibleTable);
@@ -45,19 +41,32 @@ function App() {
     localStorage.setItem("isVisibleCart", isVisibleCart);
   }, [isVisibleCart]);
 
+  useEffect(() => {
+    localStorage.setItem("userID", userID);
+  }, [userID]);
+
   const updateUser = (newUser) => {
     setUserID(newUser);
-    // Set isLoggedIn to true after successful login
     setIsLoggedIn(true);
+    if (newUser === null) {
+      setIsLoggedIn(false);
+    }
   };
+
   const updateFood = (newFood) => {
     setSelectedFoodItem(newFood);
   };
-  const toggleVisibility = (newVisibility) => {
-    if (newVisibility === "table") {
-      setIsVisibleTable(true);
-    } else if (newVisibility === "cart") {
+
+  const toggleVisibilityCart = (newVisibilityCart) => {
+    if (newVisibilityCart) {
       setIsVisibleCart(true);
+    } else {
+      setIsVisibleCart(false);
+    }
+  };
+  const toggleVisibilityTable = (newVisibilityTable) => {
+    if (newVisibilityTable) {
+      setIsVisibleTable(true);
     }
   };
 
@@ -91,18 +100,24 @@ function App() {
             <Menu
               userId={userID}
               selectedFood={updateFood}
-              Visible={toggleVisibility}
+              VisibleCart={toggleVisibilityCart}
             />
           }
         />
         <Route
           path="/cart"
-          element={<Cart userId={userID} CartItems={SelectedFoodItem} />}
+          element={
+            <Cart
+              userId={userID}
+              CartItems={selectedFoodItem}
+              VisibleCart={toggleVisibilityCart}
+            />
+          }
         />
-        <Route path="/congrats" element={<CongratsPage/>}/>
+        <Route path="/congrats" element={<CongratsPage />} />
         <Route
           path="/table"
-          element={<Table userId={userID} Visible={toggleVisibility} />}
+          element={<Table userId={userID} VisibleTable={toggleVisibilityTable} />}
         />
         <Route path="/About" element={<AboutPage />} />
         <Route path="/Services" element={<ServicesSection />} />

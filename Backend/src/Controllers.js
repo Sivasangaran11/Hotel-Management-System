@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const { User, FoodItem, CartItem } = require("./Models");
+const { User, FoodItem, CartItem, Table } = require("./Models");
 
 // Register a new user
 const registerUser = async (req, res) => {
@@ -150,6 +150,38 @@ const deleteCartItem = async (req, res) => {
   }
 };
 
+//Table
+
+const reserveTable = async (req, res) => {
+  const { number, time, date, accommodation, reservee } = req.body;
+
+  try {
+    const table = new Table({
+      number,
+      time,
+      date,
+      accommodation,
+      reservee,
+      reserved: true
+    });
+
+    await table.save();
+    res.status(201).send(table);
+  } catch (error) {
+    res.status(400).send({ error: 'Error reserving table' });
+  }
+};
+
+// Get all tables
+const getAllTables = async (req, res) => {
+  try {
+    const tables = await Table.find();
+    res.status(200).send(tables);
+  } catch (error) {
+    res.status(400).send({ error: 'Error fetching tables' });
+  }
+};
+
 module.exports = {
   registerUser,
   getUsers,
@@ -160,4 +192,6 @@ module.exports = {
   getCartItemById,
   updateCartItem,
   deleteCartItem,
+  reserveTable,
+  getAllTables,
 };
