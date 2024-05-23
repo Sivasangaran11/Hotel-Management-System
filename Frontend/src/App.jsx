@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { Login, ForgotPassword, Register } from "./LoginPage.jsx";
-import { HomePage, AboutPage, Contact } from "./Home.jsx";
-import { Menu, Cart } from "./Menu.jsx";
-import Table from "./table.jsx";
-import { Header, Footer } from "./HAF.jsx";
-import CongratsPage from "./Congrats.jsx";
-import ServicesSection from "./service.jsx";
+import { Login, ForgotPassword, Register } from "./LoginPage";
+import { HomePage, AboutPage, Contact, Services } from "./Home";
+import { Menu, Cart } from "./Menu";
+import Table from "./table";
+import { Header, Footer } from "./HAF";
+import CongratsPage from "./Congrats";
 
 function App() {
-  // Initialize state with local storage data or default values
   const [userID, setUserID] = useState(localStorage.getItem("userID") || null);
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
@@ -23,52 +21,35 @@ function App() {
   const [isVisibleCart, setIsVisibleCart] = useState(
     localStorage.getItem("isVisibleCart") === "true"
   );
-
-  // Effect to store state data in local storage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("isLoggedIn", isLoggedIn);
-  }, [isLoggedIn]);
-
-  useEffect(() => {
-    localStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
-  }, [selectedFoodItem]);
-
-  useEffect(() => {
-    localStorage.setItem("isVisibleTable", isVisibleTable);
-  }, [isVisibleTable]);
-
-  useEffect(() => {
-    localStorage.setItem("isVisibleCart", isVisibleCart);
-  }, [isVisibleCart]);
+  const [isDarkTheme, setIsDarkTheme] = useState(
+    localStorage.getItem("isDarkTheme") === "true"
+  );
 
   useEffect(() => {
     localStorage.setItem("userID", userID);
-  }, [userID]);
+    localStorage.setItem("isLoggedIn", isLoggedIn);
+    localStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
+    localStorage.setItem("isVisibleTable", isVisibleTable);
+    localStorage.setItem("isVisibleCart", isVisibleCart);
+    localStorage.setItem("isDarkTheme", isDarkTheme);
+  }, [
+    userID,
+    isLoggedIn,
+    selectedFoodItem,
+    isVisibleTable,
+    isVisibleCart,
+    isDarkTheme,
+  ]);
 
   const updateUser = (newUser) => {
     setUserID(newUser);
-    setIsLoggedIn(true);
-    if (newUser === null) {
-      setIsLoggedIn(false);
-    }
+    setIsLoggedIn(!!newUser);
   };
 
-  const updateFood = (newFood) => {
-    setSelectedFoodItem(newFood);
-  };
-
-  const toggleVisibilityCart = (newVisibilityCart) => {
-    if (newVisibilityCart) {
-      setIsVisibleCart(true);
-    } else {
-      setIsVisibleCart(false);
-    }
-  };
-  const toggleVisibilityTable = (newVisibilityTable) => {
-    if (newVisibilityTable) {
-      setIsVisibleTable(true);
-    }
-  };
+  const updateFood = (newFood) => setSelectedFoodItem(newFood);
+  const toggleVisibilityCart = (isVisible) => setIsVisibleCart(isVisible);
+  const toggleVisibilityTable = (isVisible) => setIsVisibleTable(isVisible);
+  const toggleTheme = () => setIsDarkTheme((prevTheme) => !prevTheme);
 
   const location = useLocation();
   const shouldRenderHeaderFooter = ![
@@ -78,17 +59,16 @@ function App() {
   ].includes(location.pathname);
 
   return (
-    <div className="App">
-      {/* Header and Footer components */}
+    <div className={`App ${isDarkTheme ? "dark-theme" : "light-theme"}`}>
       {shouldRenderHeaderFooter && (
         <Header
           LoginStatus={updateUser}
           ISLoggedIn={isLoggedIn}
           CartVisibility={isVisibleCart}
           TableVisibility={isVisibleTable}
+          Theme={toggleTheme}
         />
       )}
-      {/* Routes for different pages */}
       <Routes>
         <Route
           path="/"
@@ -117,16 +97,17 @@ function App() {
         <Route path="/congrats" element={<CongratsPage />} />
         <Route
           path="/table"
-          element={<Table userId={userID} VisibleTable={toggleVisibilityTable} />}
+          element={
+            <Table userId={userID} VisibleTable={toggleVisibilityTable} />
+          }
         />
         <Route path="/About" element={<AboutPage />} />
-        <Route path="/Services" element={<ServicesSection />} />
+        <Route path="/Services" element={<Services />} />
         <Route path="/Contact" element={<Contact />} />
         <Route path="/Login" element={<Login currentUser={updateUser} />} />
         <Route path="/Register" element={<Register />} />
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
       </Routes>
-      {/* Footer component */}
       {shouldRenderHeaderFooter && <Footer />}
     </div>
   );

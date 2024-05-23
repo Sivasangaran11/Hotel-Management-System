@@ -7,7 +7,7 @@ import {
   faGoogle,
   faLinkedinIn,
 } from "@fortawesome/free-brands-svg-icons";
-import "./Login.css";
+import "./styles/Login.css";
 import axios from "axios";
 //import SHA256 from 'crypto-js/sha256';
 //import CryptoJS from 'crypto-js';
@@ -94,7 +94,7 @@ const Login = (props) => {
       <div className="forms-container">
         <div className="signin-signup">
           <form onSubmit={handleSubmit} className="sign-in-form">
-            <h2 className="title">Sign In</h2>
+            <h2 className="title-login">Sign In</h2>
             {error && <p className="error">{error}</p>}
             <div className="input-field">
               <i className="fas fa-user"></i>
@@ -278,7 +278,7 @@ const Register = (props) => {
       <div className="forms-container">
         <div className="signin-signup">
           <form method="POST" onSubmit={handleSubmit} className="sign-up-form">
-            <h2 className="title">Sign up</h2>
+            <h2 className="title-login">Sign up</h2>
             {error && <p className="error">{error}</p>}
             <div className="input-field">
               <i className="fas fa-user"></i>

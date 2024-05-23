@@ -21,6 +21,7 @@
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "bcrypt-ts": "^5.0.2",
+    "boxicons": "^2.1.4",
     "crypto-js": "^4.2.0",
     "json-server": "^1.0.0-alpha.23",
     "mock-aws-s3": "^4.0.2",

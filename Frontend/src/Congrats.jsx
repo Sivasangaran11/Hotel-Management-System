@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import "./style-congrats.css";
+import "./styles/style-congrats.css";
 const CongratsPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
