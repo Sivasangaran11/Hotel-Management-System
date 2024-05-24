@@ -15,70 +15,58 @@ function Header(props) {
       <a href="#" className="scrolltop" id="scroll-top">
         <i className="bx bx-chevron-up scrolltop__icon"></i>
       </a>
-
       {/* HEADER */}
       <header className="l-header" id="header">
         <nav className="nav bd-container">
-          <a href="#" className="nav__logo">
+          <Link to="/" className="nav__logo">
             <h1>SaPPadu.</h1>
-          </a>
-
+          </Link>
           <div className="nav__menu" id="nav-menu">
             <ul className="nav__list">
-              <Link to="/">
-                <li className="nav__item">
-                  <a href="#" className="nav__link active-link">
-                    Home
-                  </a>
-                </li>
-              </Link>
-              <Link to="/About">
-                <li className="nav__item">
-                  <a href="#" className="nav__link">
-                    About
-                  </a>
-                </li>
-              </Link>
-              <Link to="/Services">
-                <li className="nav__item">
-                  <a href="#" className="nav__link">
-                    Services
-                  </a>
-                </li>
-              </Link>
-
+              <li className="nav__item">
+                <Link to="/" className="nav__link active-link">
+                  Home
+                </Link>
+              </li>
+              <li className="nav__item">
+                <Link to="/About" className="nav__link">
+                  About
+                </Link>
+              </li>
+              <li className="nav__item">
+                <Link to="/Services" className="nav__link">
+                  Services
+                </Link>
+              </li>
               {!props.ISLoggedIn ? (
                 <>
-                  <Link to="/Login">
-                    <li className="nav__item">
-                      <a href="#" className="nav__link">
-                        Log in
-                      </a>
-                    </li>
-                  </Link>
-                  <Link to="/Register">
-                    <li className="nav__item">
-                      <a className="nav__link">Register</a>
-                    </li>
-                  </Link>
+                  <li className="nav__item">
+                    <Link to="/Login" className="nav__link">
+                      Log in
+                    </Link>
+                  </li>
+                  <li className="nav__item">
+                    <Link to="/Register">Register</Link>
+                  </li>
                 </>
               ) : (
-                <Link to="/Login" onClick={() => props.LoginStatus(null)}>
-                  <li className="nav__item">
-                    <a className="nav__link">Log out</a>
-                  </li>
-                </Link>
-              )}
-
-              <Link to="/Contact">
                 <li className="nav__item">
-                  <a href="#" className="nav__link">
-                    Contact us
-                  </a>
+                  <Link
+                    to="/Login"
+                    className="nav__link"
+                    onClick={() => props.LoginStatus(null)}
+                  >
+                    Log out
+                  </Link>
                 </li>
-              </Link>
-
+              )}
+              <li className="nav__item">
+                <Link to="/Contact" className="nav__link">
+                  Contact us
+                </Link>
+              </li>
               {props.TableVisibility && (
+                <Link to = "/BookedTables">
                 <li className="nav__item">
                   <div className="nav__link">
                     <svg
@@ -92,8 +80,8 @@ function Header(props) {
                     </svg>
                   </div>
                 </li>
+                </Link>
               )}
-
               {props.CartVisibility && (
                 <Link to="/cart">
                   <li className="nav__item">
@@ -113,7 +101,6 @@ function Header(props) {
                   </li>
                 </Link>
               )}
-
               <li>
                 <i
                   className="bx bx-moon change-theme"
@@ -123,7 +110,6 @@ function Header(props) {
               </li>
             </ul>
           </div>
-
           <div className="nav__toggle" id="nav-toggle">
             <i className="bx bx-menu"></i>
           </div>
@@ -160,17 +146,13 @@ function Footer() {
             <h3 className="footer__title">Services</h3>
             <ul>
               <li>
-                <Link to="/table">
-                  <a href="#" className="footer__link">
-                    Table Reservation
-                  </a>
+                <Link to="/table" className="footer__link">
+                    Table Reservation 
                 </Link>
               </li>
               <li>
-                <Link to="/menu">
-                  <a href="#" className="footer__link">
+                <Link to="/menu" className="footer__link">
                     Order Food
-                  </a>
                 </Link>
               </li>
               <li>
@@ -191,10 +173,8 @@ function Footer() {
               </li>
 
               <li>
-                <Link to="/contact">
-                  <a href="#" className="footer__link">
+                <Link to="/contact" className="footer__link">
                     Contact us
-                  </a>
                 </Link>
               </li>
 

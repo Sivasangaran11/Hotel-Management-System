@@ -41,6 +41,7 @@ const Login = (props) => {
     }
 
     // Validate email and password fields
+    
     if (!email.trim()) {
       setError("Please enter your email.");
       return;
@@ -56,7 +57,6 @@ const Login = (props) => {
     }
 
     try {
-      // Fetch user data from the server
       const response = await axios.get("http://localhost:3000/api/users");
       const usersData = response.data;
 
@@ -64,9 +64,7 @@ const Login = (props) => {
       const user = usersData.find((user) => user.email === email);
 
       if (!user) {
-        // Display alert message if user does not exist
         window.alert("User does not exist. Please register.");
-        // Redirect to register page
         navigateTo('/Register');
         return;
       }
@@ -74,12 +72,10 @@ const Login = (props) => {
       // Compare the entered password with the hashed password using bcrypt-ts
       const passwordMatch = compareSync(password, user.password);
       if (!passwordMatch) {
-        // Display alert message if password is incorrect
         window.alert("Incorrect password.");
         return;
       }
 
-      // Call props.currentUser with the user ID after successful login
       props.currentUser(user._id);
       navigateTo('/');
       console.log("Login successful!");
@@ -162,8 +158,6 @@ const ForgotPassword = (props) => {
       setError("Passwords do not match");
       return;
     }
-    // For example, you can send a request to your backend to change the password
-    // Reset form fields
     setEmail("");
     setPassword1("");
     setPassword2("");
@@ -216,7 +210,7 @@ const ForgotPassword = (props) => {
     </>
   );
 };
-const Register = (props) => {
+const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -240,7 +234,6 @@ const Register = (props) => {
       setError("Email address exceeds the maximum character limit (50).");
       return;
     }
-    // Check if password matches confirm password
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -262,14 +255,13 @@ const Register = (props) => {
         email: email,
         address: address,
         phoneNumber: phoneNumber,
-        password: hashedPassword, // Send hashed password to the server
+        password: hashedPassword, 
       };
 
       await axios.post("http://localhost:3000/api/users", user);
       navigateTo('/Login');
     } catch (error) {
       console.error("Error registering user:", error);
-      // Handle error
     }
   };
 

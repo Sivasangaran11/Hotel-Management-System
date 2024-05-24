@@ -60,10 +60,6 @@ const CongratsPage = () => {
           <div className="text">
             <p>
               Your order has been placed successfully.
-              {/* Uncomment and replace with actual details if needed */}
-              {/* <br />Here are your details:
-            <br />Date: 21-11-2021
-            <br />Time: 11:00 am */}
               <br />
               Order-ID: 20210001
               <br />
@@ -72,7 +68,6 @@ const CongratsPage = () => {
                   <h5 className="links">Track Order</h5>
                 </button>
               </Link>{" "}
-              {/* Use Link component for routing */}
               <Link to="/" className="butt">
                 <button className="button-congrats">
                   <h5 className="links">Return Home</h5>

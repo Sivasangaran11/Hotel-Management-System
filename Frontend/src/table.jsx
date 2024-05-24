@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 import "./styles/styles.css";
+import { Link } from "react-router-dom";
 
 const Table = (props) => {
   const initialTables = [
@@ -20,6 +20,7 @@ const Table = (props) => {
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const [reserved, setReserved] = useState(false);
+  const [bookedTables, setBookedTables] = useState([]);
 
   useEffect(() => {
     const timeslots = [
@@ -45,10 +46,16 @@ const Table = (props) => {
         JSON.parse(
           sessionStorage.getItem(`table${table.number}_bookedTimeSlots`)
         ) || [];
+      const isReserved =
+        sessionStorage.getItem(`table${table.number}_reserved`) === "true";
       const filteredTimeSlots = timeslots.filter(
         (slot) => !bookedTimeSlots.includes(slot)
       );
-      return { ...table, availableTimeSlots: filteredTimeSlots };
+      return {
+        ...table,
+        reserved: isReserved,
+        availableTimeSlots: filteredTimeSlots,
+      };
     });
 
     setTables(updatedTables);
@@ -59,9 +66,7 @@ const Table = (props) => {
       alert("Please select a time slot.");
       return;
     }
-    const tableId = uuidv4();
     const table = {
-      id: tableId,
       number: tableNumber,
       time: timeSlot,
       date: new Date().toLocaleDateString(),
@@ -71,16 +76,22 @@ const Table = (props) => {
 
     try {
       await axios.post(`http://localhost:3000/api/table`, table);
-      const updatedTables = tables.map((table) =>
-        table.number === tableNumber
+      const updatedBookedTables = [...bookedTables, table];
+      props.updateBookedTables(updatedBookedTables);
+      setBookedTables(updatedBookedTables);
+      const updatedTables = tables.map((t) =>
+        t.number === tableNumber
           ? {
-              ...table,
+              ...t,
               reserved: true,
-              availableTimeSlots: table.availableTimeSlots.filter(
+              time: timeSlot,
+              date: new Date().toLocaleDateString(),
+              reservee: props.userId,
+              availableTimeSlots: t.availableTimeSlots.filter(
                 (slot) => slot !== timeSlot
               ),
             }
-          : table
+          : t
       );
       setTables(updatedTables);
 
@@ -94,7 +105,7 @@ const Table = (props) => {
       );
       sessionStorage.setItem(`table${tableNumber}_reserved`, "true");
 
-      props.VisibleTable(true);
+      props.toggleVisibilityTable(true);
     } catch (error) {
       console.error("Error reserving table:", error);
     }
@@ -103,83 +114,118 @@ const Table = (props) => {
   const handleReservation = (event, tableNumber) => {
     event.preventDefault();
     setSelectedTable(tableNumber);
-    setSelectedTimeSlot("");
     setReserved(true);
   };
 
-  const handleConfirmations = (event, tableNumber) => {
+  const handleConfirmation = (event) => {
     event.preventDefault();
     setReserved(false);
-    reserveTable(tableNumber, selectedTimeSlot);
+    reserveTable(selectedTable, selectedTimeSlot);
   };
 
   return (
-    <div className="l-table">
-      <table>
-        <thead>
-          <tr>
-            <th>Table</th>
-            <th>Time</th>
-            <th>Date</th>
-            <th>Accommodation</th>
-            <th>Reservee</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {tables.map((table) => (
-            <tr
-              key={table.number}
-              style={{
-                backgroundColor:
-                  sessionStorage.getItem(`table${table.number}_reserved`) ===
-                  "true"
-                    ? "lightgreen"
-                    : "inherit",
-              }}
-            >
-              <td>{table.number}</td>
-              <td>{table.time || "7:00 am - 10:00 pm"}</td>
-              <td>{table.date || new Date().toLocaleDateString()}</td>
-              <td>{table.accommodation}</td>
-              <td>
-                {selectedTable === table.number && reserved ? (
-                  <form
-                    onSubmit={(event) =>
-                      handleConfirmations(event, table.number)
-                    }
-                  >
-                    <button type="submit" className="button">
-                      Confirm
-                    </button>
-                    <select
-                      value={selectedTimeSlot}
-                      onChange={(e) => setSelectedTimeSlot(e.target.value)}
+    <div>
+      <div className="l-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Table</th>
+              <th>Time</th>
+              <th>Date</th>
+              <th>Accommodation</th>
+              <th>Reservee</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {tables.map((table) => (
+              <tr
+                key={table.number}
+                style={{
+                  backgroundColor: table.reserved ? "lightgreen" : "inherit",
+                  color: table.reserved ? "#333333" : "inherit",
+                }}
+              >
+                <td>{table.number}</td>
+                <td>{table.time || "7:00 am - 10:00 pm"}</td>
+                <td>{table.date || new Date().toLocaleDateString()}</td>
+                <td>{table.accommodation}</td>
+                <td>
+                  {selectedTable === table.number && reserved ? (
+                    <form onSubmit={handleConfirmation} className="l-form">
+                      <button type="submit" className="button">
+                        Confirm
+                      </button>
+                      <select
+                        value={selectedTimeSlot}
+                        onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                      >
+                        <option value="">Select a time slot</option>
+                        {table.availableTimeSlots.map((slot) => (
+                          <option key={slot} value={slot}>
+                            {slot}
+                          </option>
+                        ))}
+                      </select>
+                    </form>
+                  ) : (
+                    <button
+                      onClick={(event) =>
+                        handleReservation(event, table.number)
+                      }
+                      className="button"
                     >
-                      <option value="">Select a time slot</option>
-                      {table.availableTimeSlots.map((slot) => (
-                        <option key={slot} value={slot}>
-                          {slot}
-                        </option>
-                      ))}
-                    </select>
-                  </form>
-                ) : (
-                  <form
-                    onSubmit={(event) => handleReservation(event, table.number)}
-                  >
-                    <button type="submit" className="button">
                       Reserve
                     </button>
-                  </form>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
 
-export default Table;
+const BookedTables = (props) => {
+  const tablesBooked = props.bookedTables;
+
+  return (
+    <div className="l-table">
+      <h2>Booked Tables: {tablesBooked.length}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Table Number</th>
+            <th>Time Slot</th>
+            <th>Date</th>
+            <th>Accommodation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tablesBooked.length > 0 ? (
+            tablesBooked.map((table, index) => (
+              <tr key={index}>
+                <td>{table.number}</td>
+                <td>{table.time}</td>
+                <td>{table.date}</td>
+                <td>{table.accommodation}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4">No tables are currently booked.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+      <Link to="/table" className="back-table">
+        Back to Table
+      </Link>
+    </div>
+  );
+};
+
+
+export { Table, BookedTables };

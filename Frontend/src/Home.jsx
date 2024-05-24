@@ -22,22 +22,22 @@ function HomePage(props) {
               <div className="button-container">
                 {/* Conditional rendering of the "View Menu" button */}
                 {props.ISLoggedIn ? (
-                  <Link to="/menu">
-                    <a className="button">View Menu</a>
+                  <Link to="/menu" className="button">
+                    View Menu
                   </Link>
                 ) : (
-                  <Link to="/Login">
-                    <a className="button">Login to View Menu</a>
+                  <Link to="/Login" className="button">
+                    Login to View Menu
                   </Link>
                 )}
                 {/* Conditional rendering of the "Reserve Table" button */}
                 {props.ISLoggedIn ? (
-                  <Link to="/table">
-                    <a className="button">Reserve Table</a>
+                  <Link to="/table" className="button">
+                    Reserve Table
                   </Link>
                 ) : (
-                  <Link to="/Login">
-                    <a className="button">Login to Reserve Table</a>
+                  <Link to="/Login" className="button">
+                    Login to Reserve Table
                   </Link>
                 )}
               </div>

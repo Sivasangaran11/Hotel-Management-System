@@ -665,6 +665,9 @@ img {
 .l-table{
   background-color: var(--body-color) ;
 }
+.l-form{
+  padding: 0px ;
+}
 table {
   /* position: absolute; */
   margin-top: var(--mb-9);
@@ -704,6 +707,13 @@ tr:hover {
   background-color: var(--container-color);
   transform: scale(1.02);
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2), -1px -1px 8px rgba(0, 0, 0, 0.2);
+}
+.back-table{
+  display: flex;
+	text-decoration: none;	
+	color: var(--first-color-alt);
+  padding: 10px;
+  margin-left: 70%;
 }
 
 /* TABLE ENDS */

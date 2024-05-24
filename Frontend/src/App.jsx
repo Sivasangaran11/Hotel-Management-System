@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Login, ForgotPassword, Register } from "./LoginPage";
 import { HomePage, AboutPage, Contact, Services } from "./Home";
 import { Menu, Cart } from "./Menu";
-import Table from "./table";
+import {Table, BookedTables} from "./Table.jsx";
 import { Header, Footer } from "./HAF";
 import CongratsPage from "./Congrats";
 
@@ -12,6 +12,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
+  const [bookedTables, setBookedTables] = useState([]);
   const [selectedFoodItem, setSelectedFoodItem] = useState(
     JSON.parse(localStorage.getItem("selectedFood")) || []
   );
@@ -40,6 +41,11 @@ function App() {
     isVisibleCart,
     isDarkTheme,
   ]);
+  useEffect(() => {
+    // Initialize booked tables from session storage
+    const storedBookedTables = JSON.parse(sessionStorage.getItem("bookedTables")) || [];
+    setBookedTables(storedBookedTables);
+  }, []);
 
   const updateUser = (newUser) => {
     setUserID(newUser);
@@ -50,7 +56,10 @@ function App() {
   const toggleVisibilityCart = (isVisible) => setIsVisibleCart(isVisible);
   const toggleVisibilityTable = (isVisible) => setIsVisibleTable(isVisible);
   const toggleTheme = () => setIsDarkTheme((prevTheme) => !prevTheme);
-
+  const updateBookedTables = (newBookedTables) =>{
+    setBookedTables(newBookedTables);
+    sessionStorage.setItem("bookedTables", JSON.stringify(newBookedTables));
+  }
   const location = useLocation();
   const shouldRenderHeaderFooter = ![
     "/Login",
@@ -98,8 +107,16 @@ function App() {
         <Route
           path="/table"
           element={
-            <Table userId={userID} VisibleTable={toggleVisibilityTable} />
+            <Table
+              userId={userID}
+              toggleVisibilityTable={toggleVisibilityTable}
+              updateBookedTables={updateBookedTables}
+            />
           }
+        />
+        <Route
+          path="/BookedTables"
+          element={<BookedTables bookedTables={bookedTables} />}
         />
         <Route path="/About" element={<AboutPage />} />
         <Route path="/Services" element={<Services />} />
