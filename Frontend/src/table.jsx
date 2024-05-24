@@ -190,7 +190,6 @@ const Table = (props) => {
 
 const BookedTables = (props) => {
   const tablesBooked = props.bookedTables;
-
   return (
     <div className="l-table">
       <h2>Booked Tables: {tablesBooked.length}</h2>

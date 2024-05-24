@@ -133,7 +133,6 @@ const Cart = (props) => {
   };
 
   const handleSubmission = async () => {
-    console.log(cartitems.length);
     if (cartItems.length === 0) {
       alert("Your cart is empty. Please select some food items.");
       navigateTo("/menu");
