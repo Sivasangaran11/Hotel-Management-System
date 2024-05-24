@@ -7,9 +7,8 @@ import {
   faGoogle,
   faLinkedinIn,
 } from "@fortawesome/free-brands-svg-icons";
-import "./Login.css";
+import "./styles/Login.css";
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 //import SHA256 from 'crypto-js/sha256';
 //import CryptoJS from 'crypto-js';
 //import argon2 from 'argon2';
@@ -42,6 +41,7 @@ const Login = (props) => {
     }
 
     // Validate email and password fields
+    
     if (!email.trim()) {
       setError("Please enter your email.");
       return;
@@ -57,17 +57,14 @@ const Login = (props) => {
     }
 
     try {
-      // Fetch user data from the server
-      const response = await axios.get("http://localhost:8000/users");
+      const response = await axios.get("http://localhost:3000/api/users");
       const usersData = response.data;
 
       // Find user by email in the fetched data
       const user = usersData.find((user) => user.email === email);
 
       if (!user) {
-        // Display alert message if user does not exist
         window.alert("User does not exist. Please register.");
-        // Redirect to register page
         navigateTo('/Register');
         return;
       }
@@ -75,13 +72,11 @@ const Login = (props) => {
       // Compare the entered password with the hashed password using bcrypt-ts
       const passwordMatch = compareSync(password, user.password);
       if (!passwordMatch) {
-        // Display alert message if password is incorrect
         window.alert("Incorrect password.");
         return;
       }
 
-      // Call props.currentUser with the user ID after successful login
-      props.currentUser(user.id);
+      props.currentUser(user._id);
       navigateTo('/');
       console.log("Login successful!");
     } catch (error) {
@@ -95,7 +90,7 @@ const Login = (props) => {
       <div className="forms-container">
         <div className="signin-signup">
           <form onSubmit={handleSubmit} className="sign-in-form">
-            <h2 className="title">Sign In</h2>
+            <h2 className="title-login">Sign In</h2>
             {error && <p className="error">{error}</p>}
             <div className="input-field">
               <i className="fas fa-user"></i>
@@ -163,8 +158,6 @@ const ForgotPassword = (props) => {
       setError("Passwords do not match");
       return;
     }
-    // For example, you can send a request to your backend to change the password
-    // Reset form fields
     setEmail("");
     setPassword1("");
     setPassword2("");
@@ -217,7 +210,7 @@ const ForgotPassword = (props) => {
     </>
   );
 };
-const Register = (props) => {
+const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
@@ -241,13 +234,12 @@ const Register = (props) => {
       setError("Email address exceeds the maximum character limit (50).");
       return;
     }
-    // Check if password matches confirm password
     if (password !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
     try {
-      const response = await axios.get("http://localhost:8000/users");
+      const response = await axios.get("http://localhost:3000/api/users");
       const usersData = response.data;
       const existingUsers = usersData.find((user) => user.email === email);
       if (existingUsers) {
@@ -257,22 +249,19 @@ const Register = (props) => {
         return;
       }
       const hashedPassword = hashSync(password);
-      const userId = uuidv4();
 
       const user = {
-        id: userId,
         name: name,
         email: email,
         address: address,
         phoneNumber: phoneNumber,
-        password: hashedPassword, // Send hashed password to the server
+        password: hashedPassword, 
       };
 
-      await axios.post("http://localhost:8000/users", user);
+      await axios.post("http://localhost:3000/api/users", user);
       navigateTo('/Login');
     } catch (error) {
       console.error("Error registering user:", error);
-      // Handle error
     }
   };
 
@@ -281,7 +270,7 @@ const Register = (props) => {
       <div className="forms-container">
         <div className="signin-signup">
           <form method="POST" onSubmit={handleSubmit} className="sign-up-form">
-            <h2 className="title">Sign up</h2>
+            <h2 className="title-login">Sign up</h2>
             {error && <p className="error">{error}</p>}
             <div className="input-field">
               <i className="fas fa-user"></i>
