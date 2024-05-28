@@ -62,7 +62,7 @@ const Menu = (props) => {
           {foodItems.map((item) => (
             <div key={item._id} className="menu__content">
               <img
-                src={`src/assets/img/${item.source}`}
+                src={`./assets/img/${item.source}`}
                 alt={item.name}
                 className="menu__img"
               />
