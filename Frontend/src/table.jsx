@@ -3,6 +3,8 @@ import axios from "axios";
 import "./styles/styles.css";
 import { Link } from "react-router-dom";
 
+const backendUri = import.meta.env.VITE_BACKEND_URI;
+
 const Table = (props) => {
   const initialTables = [
     { number: 1, accommodation: "4", reserved: false, availableTimeSlots: [] },
@@ -75,7 +77,7 @@ const Table = (props) => {
     };
 
     try {
-      await axios.post(`http://localhost:3000/api/table`, table);
+      await axios.post(`${backendUri}/api/table`, table);
       const updatedBookedTables = [...bookedTables, table];
       props.updateBookedTables(updatedBookedTables);
       setBookedTables(updatedBookedTables);

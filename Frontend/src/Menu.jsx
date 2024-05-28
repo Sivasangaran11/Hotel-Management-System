@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "./styles/style-cart.css";
 import "boxicons/css/boxicons.min.css";
 
+const backendUri = import.meta.env.VITE_BACKEND_URI;
+
 const Menu = (props) => {
   const [foodItems, setFoodItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -12,7 +14,7 @@ const Menu = (props) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/menu")
+      .get(`${backendUri}/api/menu`)
       .then((response) => {
         setFoodItems(response.data);
       })
@@ -150,7 +152,7 @@ const Cart = (props) => {
         reservee: props.userId,
       }));
       const response = await axios.post(
-        "http://localhost:3000/api/cart",
+        `${backendUri}/api/cart`,
         orderItems
       );
       console.log("Cart items submitted successfully:", response.data);
