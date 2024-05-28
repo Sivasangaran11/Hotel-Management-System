@@ -14,6 +14,9 @@ const {
 } = require("./Controllers");
 
 const router = express.Router();
+router.get("/", (req, res) => {
+  res.send("Connection established");
+});
 
 // User routes
 router.post("/users", registerUser);
