@@ -28,6 +28,8 @@ const isValidPhoneNumber = (phoneNumber) => {
   return phoneRegex.test(phoneNumber);
 };
 
+const backendUri = import.meta.env.VITE_BACKEND_URI;
+
 const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,7 +59,7 @@ const Login = (props) => {
     }
 
     try {
-      const response = await axios.get("http://localhost:3000/api/users");
+      const response = await axios.get(`${backendUri}/api/users`);
       const usersData = response.data;
 
       // Find user by email in the fetched data
@@ -239,8 +241,9 @@ const Register = () => {
       return;
     }
     try {
-      const response = await axios.get("http://localhost:3000/api/users");
+      const response = await axios.get(`${backendUri}/api/users`);
       const usersData = response.data;
+      console.log(usersData);
       const existingUsers = usersData.find((user) => user.email === email);
       if (existingUsers) {
         setError("User already exists. Please login.");
@@ -258,7 +261,7 @@ const Register = () => {
         password: hashedPassword, 
       };
 
-      await axios.post("http://localhost:3000/api/users", user);
+      await axios.post(`${backendUri}/api/users`, user);
       navigateTo('/Login');
     } catch (error) {
       console.error("Error registering user:", error);
