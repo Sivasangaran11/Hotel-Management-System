@@ -95,10 +95,6 @@ html {
   line-height: 1.6;
 }
 
-/* remove scrollbar */
-body::-webkit-scrollbar {
-}
-/* remove scrollbar ends */
 
 h1,
 h2,
@@ -123,9 +119,7 @@ img {
   height: auto;
 }
 
-/*========== CLASS CSS ==========*/
-.section {
-}
+
 
 .section-title,
 .section-subtitle {
@@ -802,4 +796,35 @@ tr:hover {
 
 .nav__link:hover .cart-message {
   opacity: 1; /* Show on hover */
+}
+/* ====== Loaders =======*/
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loading-gif {
+  width: 200px;
+  height: 200px;
+}
+
+.Login-loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the loader horizontally */
+ 
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  transform: translateX(20px);
+  transition: transform 300ms ease-in-out;
+}
+
+.loader.animate {
+  transform: translateX(0px);
 }
