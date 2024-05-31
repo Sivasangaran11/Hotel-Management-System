@@ -4,22 +4,25 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./styles/style-cart.css";
 import "boxicons/css/boxicons.min.css";
-
+import loadingGif from './assets/img/loader.gif';
 const backendUri = import.meta.env.VITE_BACKEND_URI;
 
 const Menu = (props) => {
   const [foodItems, setFoodItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedItemIds, setSelectedItemIds] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     axios
       .get(`${backendUri}/api/menu`)
       .then((response) => {
         setFoodItems(response.data);
+        setLoading(false); 
       })
       .catch((error) => {
         console.error("Error fetching food items:", error);
+        setLoading(false); 
       });
   }, []);
 
@@ -40,7 +43,7 @@ const Menu = (props) => {
     if (!selectedItemIds.includes(itemId)) {
       const selectedItem = foodItems.find((item) => item._id === itemId);
       if (selectedItem) {
-        selectedItem.quantity = 1; // Set initial quantity to 1
+        selectedItem.quantity = 1; 
         const updatedSelectedItems = [...selectedItems, selectedItem];
         const updatedSelectedItemIds = [...selectedItemIds, itemId];
         setSelectedItems(updatedSelectedItems);
@@ -58,31 +61,36 @@ const Menu = (props) => {
     <div className="l-menu">
       <section className="menu section bd-container" id="menu">
         <h2 className="section-title">Menu</h2>
-        <div className="menu__container bd-grid">
-          {foodItems.map((item) => (
-            <div key={item._id} className="menu__content">
-              <img
-                src={`./src/assets/img/${item.source}`}
-                alt={item.name}
-                className="menu__img"
-              />
-              <h3 className="menu__name">{item.ItemName}</h3>
-              <span className="menu__price">₹{item.price}</span>
-              <div className="menu__order-container">
-                {!selectedItemIds.includes(item._id) ? (
-                  <button
-                    className="button menu__button__add"
-                    onClick={() => addItemSelected(item._id)}
-                  >
-                    Add
-                  </button>
-                ) : (
-                  <button className="button menu__button_added">Added</button>
-                )}
+        {loading ? ( // Conditional rendering based on loading state
+          <div className="loading-container">
+            <img src={loadingGif} alt="Loading..." className="loading-gif" />
+          </div>
+        ) : (
+          <div className="menu__container bd-grid">
+            {foodItems.map((item) => (
+              <div key={item._id} className="menu__content">
+                <img
+                  src={`src/assets/img/${item.source}`}
+                  alt={item.name}
+                  className="menu__img"
+                />
+                <h3 className="menu__name">{item.ItemName}</h3>
+                <span className="menu__price">₹{item.price}</span>
+                <div className="menu__order-container">
+                  {!selectedItemIds.includes(item._id) ? (
+                    <button
+                      className="button menu__button__add"
+                      onClick={() => addItemSelected(item._id)}
+                    >
+                      Add
+                    </button>
+                  ) : (
+                    <button className="button menu__button_added">Added</button>
+                  )}
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );

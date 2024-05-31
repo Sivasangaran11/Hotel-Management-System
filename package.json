@@ -8,6 +8,8 @@
     "dev:backend": "npm run dev --prefix backend"
   },
   "dependencies": {
-    "concurrently": "^8.0.1"
+    "concurrently": "^8.0.1",
+    "react-awesome-loader": "^2.0.1",
+    "react-spinners": "^0.13.8"
   }
 }

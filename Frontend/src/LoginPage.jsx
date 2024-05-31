@@ -15,6 +15,7 @@ import axios from "axios";
 //import bcrypt from "bcrypt";
 import { hashSync, compareSync } from "bcrypt-ts";
 import { Link, useNavigate } from "react-router-dom";
+import BeatLoader from "react-spinners/BeatLoader";
 //import './FTP.css';
 //import register from './assets/img/register.svg';
 const isValidEmail = (email) => {
@@ -34,16 +35,18 @@ const Login = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigateTo = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!isValidEmail(email)) {
       setError("Please enter a valid email address.");
       return;
     }
 
     // Validate email and password fields
-    
     if (!email.trim()) {
       setError("Please enter your email.");
       return;
@@ -53,12 +56,14 @@ const Login = (props) => {
       setError("Please enter your password.");
       return;
     }
+
     if (email.length > 50) {
       setError("Email address exceeds the maximum character limit (50).");
       return;
     }
 
     try {
+      setLoading(true);
       const response = await axios.get(`${backendUri}/api/users`);
       const usersData = response.data;
 
@@ -67,7 +72,7 @@ const Login = (props) => {
 
       if (!user) {
         window.alert("User does not exist. Please register.");
-        navigateTo('/Register');
+        navigateTo("/Register");
         return;
       }
 
@@ -79,11 +84,12 @@ const Login = (props) => {
       }
 
       props.currentUser(user._id);
-      navigateTo('/');
-      console.log("Login successful!");
+      setLoading(false);
+      navigateTo("/");
     } catch (error) {
       console.error("Error logging in:", error);
       setError("Failed to login. Please try again later.");
+      setLoading(false);
     }
   };
 
@@ -92,6 +98,14 @@ const Login = (props) => {
       <div className="forms-container">
         <div className="signin-signup">
           <form onSubmit={handleSubmit} className="sign-in-form">
+            <div className="Login-loader-container">
+              {loading && (
+                <div className={`loader ${loading ? "animate" : ""}`}>
+                  <h4>loading </h4>
+                  <BeatLoader color="#36d7b7" height={15} size={10} />
+                </div>
+              )}
+            </div>
             <h2 className="title-login">Sign In</h2>
             {error && <p className="error">{error}</p>}
             <div className="input-field">
@@ -112,7 +126,9 @@ const Login = (props) => {
                 placeholder="Password"
               />
             </div>
-            <input type="submit" value="Login" className="btn solid" onClick={handleSubmit}/>
+            <div className="button-loader-container">
+              <input type="submit" value="Login" className="btn solid" />
+            </div>
             <p className="social-text">Or Sign in with social platforms</p>
             <div className="social-media">
               <a href="#" className="social-icon">
@@ -142,12 +158,14 @@ const Login = (props) => {
               </button>
             </Link>
           </div>
+
           <img src={log} className="image" alt="" />
         </div>
       </div>
     </div>
   );
 };
+
 const ForgotPassword = (props) => {
   const [email, setEmail] = useState("");
   const [password1, setPassword1] = useState("");
@@ -201,11 +219,8 @@ const ForgotPassword = (props) => {
               />
             </div>
             <Link to="login">
-            <input
-              type="submit"
-              value="Submit"
-              className="btn solid"
-            /></Link>
+              <input type="submit" value="Submit" className="btn solid" />
+            </Link>
           </form>
         </div>
       </div>
@@ -248,7 +263,7 @@ const Register = () => {
       if (existingUsers) {
         setError("User already exists. Please login.");
         window.alert("User already exists. Please login.");
-        navigateTo('/Login');
+        navigateTo("/Login");
         return;
       }
       const hashedPassword = hashSync(password);
@@ -258,11 +273,11 @@ const Register = () => {
         email: email,
         address: address,
         phoneNumber: phoneNumber,
-        password: hashedPassword, 
+        password: hashedPassword,
       };
 
       await axios.post(`${backendUri}/api/users`, user);
-      navigateTo('/Login');
+      navigateTo("/Login");
     } catch (error) {
       console.error("Error registering user:", error);
     }
