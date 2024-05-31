@@ -87,7 +87,6 @@ const Menu = (props) => {
                   ) : (
                     <button className="button menu__button_added">Added</button>
                   )}
-                </div>
               </div>
             ))}
           </div>
