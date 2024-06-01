@@ -89,14 +89,15 @@ const Menu = (props) => {
                   ) : (
                     <button className="button menu__button_added">Added</button>
                   )}
-              </div>
+                </div>
+              </div> // Closing div for menu__content
             ))}
           </div>
         )}
       </section>
     </div>
   );
-};
+};  
 
 const Cart = (props) => {
   const [cartItems, setCartItems] = useState([]);
