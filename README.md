@@ -45,7 +45,7 @@ Make sure to set the following environment variables:
 - JWT_SECRET: Secret key for JWT token.
 # Frontend (.env)
 
-- VITE_API_BASE_URL: Base URL for the backend API.
+- VITE_BACKEND-URI: Base URL for the backend API.
 
 ## Contributing
 
