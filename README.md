@@ -36,18 +36,18 @@ To run the project please follow the Installation Instructions
 
 ## Environment variables
 
-   Make sure to set the following environment variables:
+Make sure to set the following environment variables:
 
 # Backend (.env)
 
--PORT: Port number for the Express server.
--MONGO_URI: MongoDB connection URI.
--JWT_SECRET: Secret key for JWT token.
+- PORT: Port number for the Express server.
+- MONGO_URI: MongoDB connection URI.
+- JWT_SECRET: Secret key for JWT token.
 # Frontend (.env)
 
    VITE_API_BASE_URL: Base URL for the backend API.
 
 ## Contributing
 
--Contributions are welcome! Please open an issue or submit a pull request with any enhancements or bug fixes.
+- Contributions are welcome! Please open an issue or submit a pull request with any enhancements or bug fixes.
 
