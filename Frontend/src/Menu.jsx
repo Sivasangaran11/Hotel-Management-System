@@ -5,6 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import "./styles/style-cart.css";
 import "boxicons/css/boxicons.min.css";
 import loadingGif from './assets/img/loader.gif';
+
+
 const backendUri = import.meta.env.VITE_BACKEND_URI;
 
 const Menu = (props) => {
@@ -87,14 +89,15 @@ const Menu = (props) => {
                   ) : (
                     <button className="button menu__button_added">Added</button>
                   )}
-              </div>
+                </div>
+              </div> // Closing div for menu__content
             ))}
           </div>
         )}
       </section>
     </div>
   );
-};
+};  
 
 const Cart = (props) => {
   const [cartItems, setCartItems] = useState([]);

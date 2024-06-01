@@ -19,7 +19,7 @@ function Header(props) {
       <header className="l-header" id="header">
         <nav className="nav bd-container">
           <Link to="/" className="nav__logo">
-            <h1>SaPPadu.</h1>
+            <h1>HP.</h1>
           </Link>
           <div className="nav__menu" id="nav-menu">
             <ul className="nav__list">

@@ -88,6 +88,15 @@ const addFoodItem = async (req, res) => {
     res.status(500).json({ message: "Error adding food item" });
   }
 };
+const deleteFoodItem = async(req, res,) => {
+  try{
+    await FoodItem.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Food item deleted' });
+  }
+  catch(error){
+    res.status(500).json({ message: 'Error deleting food item', error });
+  }
+}
 
 //Cart
 
@@ -187,6 +196,7 @@ module.exports = {
   getUsers,
   getAllFoodItems,
   addFoodItem,
+  deleteFoodItem,
   createOrder,
   getCartItems,
   getCartItemById,
