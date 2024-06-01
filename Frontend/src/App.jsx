@@ -3,7 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { Login, ForgotPassword, Register } from "./LoginPage";
 import { HomePage, AboutPage, Contact, Services } from "./Home";
 import { Menu, Cart } from "./Menu";
-import {Table, BookedTables} from "./Table.jsx";  
+import {Table, BookedTables} from "./table.jsx";
 import { Header, Footer } from "./HAF";
 import CongratsPage from "./Congrats";
 import {AnimatePresence} from "framer-motion"
