@@ -12,7 +12,9 @@ import axios from "axios";
 import { compareSync } from "bcrypt-ts";
 import { Link, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-//import register from './assets/img/register.svg';
+import register from './assets/img/register.svg';
+import {motion} from "framer-motion"
+
 const isValidEmail = (email) => {
   // Regular expression for email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -88,18 +90,23 @@ const Login = (props) => {
   };
 
   return (
-    <div className="container">
-      <div className="forms-container">
-        <div className="signin-signup">
-          <form onSubmit={handleSubmit} className="sign-in-form">
-            <div className="Login-loader-container">
+    <motion.div 
+    className="container"
+    initial = {{opacity:0}}
+    animate = {{opacity:1}}
+    exit = {{opacity:0}}
+    >
+      <div className="Login-loader-container">
               {loading && (
                 <div className={`loader ${loading ? "animate" : ""}`}>
                   <h4>loading </h4>
-                  <BeatLoader color="#36d7b7" height={15} size={10} />
+                  <BeatLoader color="#069C54" height={15} size={10} />
                 </div>
               )}
             </div>
+      <div className="forms-container">
+        <div className="signin-signup">
+          <form onSubmit={handleSubmit} className="sign-in-form">
             <h2 className="title-login">Sign In</h2>
             {error && <p className="error">{error}</p>}
             <div className="input-field">
@@ -156,7 +163,7 @@ const Login = (props) => {
           <img src={log} className="image" alt="" />
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -179,7 +186,6 @@ const ForgotPassword = (props) => {
   };
 
   return (
-    <>
       <div className="container-fp">
         <div className="form-container-fp">
           <form onSubmit={handleSubmit} className="otp-form">
@@ -218,7 +224,6 @@ const ForgotPassword = (props) => {
           </form>
         </div>
       </div>
-    </>
   );
 };
 const Register = () => {
@@ -229,10 +234,12 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigateTo = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!isValidEmail(email)) {
       setError("Please enter a valid email address.");
       return;
@@ -250,6 +257,7 @@ const Register = () => {
       return;
     }
     try {
+      setLoading(true);
       const response = await axios.get(`${backendUri}/api/users`);
       const usersData = response.data;
       const existingUsers = usersData.find((user) => user.email === email);
@@ -269,14 +277,28 @@ const Register = () => {
       };
 
       await axios.post(`${backendUri}/api/users`, user);
+      setLoading(false);
       navigateTo("/Login");
     } catch (error) {
       console.error("Error registering user:", error);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="container sign-up-mode">
+    <motion.div 
+    className="container sign-up-mode"
+    initial = {{opacity:0}}
+    animate = {{opacity:1}}
+    exit = {{opacity:0}}>
+      <div className="Login-loader-container">
+              {loading && (
+                <div className={`loader ${loading ? "animate" : ""}`}>
+                  <h4>loading </h4>
+                  <BeatLoader color="#36d7b7" height={15} size={10} />
+                </div>
+              )}
+            </div>
       <div className="forms-container">
         <div className="signin-signup">
           <form method="POST" onSubmit={handleSubmit} className="sign-up-form">
@@ -360,7 +382,22 @@ const Register = () => {
           </form>
         </div>
       </div>
-    </div>
+      <div className="panels-container">
+        <div className="panel right-panel">
+          <div className="content">
+            <h3>Already an User?</h3>
+            <p>Redirect to Login Page</p>
+            <Link to="/Login">
+              <button className="btn transparent" id="sign-up-btn">
+                Log in
+              </button>
+            </Link>
+          </div>
+
+          <img src={register} className="image" alt="" />
+        </div>
+      </div>
+    </motion.div>
   );
 };
 export { Login, ForgotPassword, Register };

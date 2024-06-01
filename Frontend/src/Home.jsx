@@ -3,9 +3,14 @@ import HomeImage from "./assets/img/248.png";
 import AboutImage from "./assets/img/about.png";
 import "./styles/styles.css";
 import { Link } from "react-router-dom";
+import {motion} from "framer-motion"
+
 function HomePage(props) {
   return (
-    <div>
+    <motion.div
+    initial={{ x: 300, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: -300, opacity: 0 }}>
       {/* Your other home page content */}
       <main className="l-main">
         <section className="home" id="home">
@@ -46,11 +51,15 @@ function HomePage(props) {
           </div>
         </section>
       </main>
-    </div>
+    </motion.div>
   );
 }
 function AboutPage() {
   return (
+    <motion.div
+    initial={{ x: 300, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: -300, opacity: 0 }}>
     <main className="l-main">
       <section className="About section bd-container" id="about">
         <div className="about__container bd-grid">
@@ -74,10 +83,15 @@ function AboutPage() {
         </div>
       </section>
     </main>
+    </motion.div>
   );
 }
 const Services= () => {
   return (
+    <motion.div
+    initial={{ x: 300, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: -300, opacity: 0 }}>
       <main className="l-main">
       <section className="services section bd-container" id="services">
           <span className="section-subtitle">Offering</span>
@@ -366,11 +380,16 @@ const Services= () => {
           </div>
       </section>
       </main>
+      </motion.div>
   );
 }
 function Contact() {
   return (
-    <div className="l-main">
+    <motion.div className="l-main"
+    initial={{ x: 300, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    exit={{ x: -300, opacity: 0 }}
+    >
       {/*<Header/>*/}
       <section className="contact section bd-container" id="contact">
         <div className="contact__container bd-grid">
@@ -395,7 +414,7 @@ function Contact() {
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 }
 

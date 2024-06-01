@@ -6,6 +6,7 @@ import { Menu, Cart } from "./Menu";
 import {Table, BookedTables} from "./Table.jsx";  
 import { Header, Footer } from "./HAF";
 import CongratsPage from "./Congrats";
+import {AnimatePresence} from "framer-motion"
 
 function App() {
   const [userID, setUserID] = useState(localStorage.getItem("userID") || null);
@@ -22,8 +23,8 @@ function App() {
   const [isVisibleCart, setIsVisibleCart] = useState(
     localStorage.getItem("isVisibleCart") === "true"
   );
-  const [isDarkTheme, setIsDarkTheme] = useState(
-    localStorage.getItem("isDarkTheme") === "true"
+  const [isLightTheme, setIsLightTheme] = useState(
+    localStorage.getItem("isLightTheme") === "true"
   );
 
   useEffect(() => {
@@ -32,14 +33,14 @@ function App() {
     localStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
     localStorage.setItem("isVisibleTable", isVisibleTable);
     localStorage.setItem("isVisibleCart", isVisibleCart);
-    localStorage.setItem("isDarkTheme", isDarkTheme);
+    localStorage.setItem("isLightTheme", isLightTheme);
   }, [
     userID,
     isLoggedIn,
     selectedFoodItem,
     isVisibleTable,
     isVisibleCart,
-    isDarkTheme,
+    isLightTheme,
   ]);
   useEffect(() => {
     // Initialize booked tables from session storage
@@ -55,7 +56,7 @@ function App() {
   const updateFood = (newFood) => setSelectedFoodItem(newFood);
   const toggleVisibilityCart = (isVisible) => setIsVisibleCart(isVisible);
   const toggleVisibilityTable = (isVisible) => setIsVisibleTable(isVisible);
-  const toggleTheme = () => setIsDarkTheme((prevTheme) => !prevTheme);
+  const toggleTheme = () => setIsLightTheme((prevTheme) => !prevTheme);
   const updateBookedTables = (newBookedTables) =>{
     setBookedTables(newBookedTables);
     sessionStorage.setItem("bookedTables", JSON.stringify(newBookedTables));
@@ -68,7 +69,7 @@ function App() {
   ].includes(location.pathname);
 
   return (
-    <div className={`App ${isDarkTheme ? "dark-theme" : "light-theme"}`}>
+    <div className={`App ${isLightTheme ? "light-theme" : "dark-theme"}`}>
       {shouldRenderHeaderFooter && (
         <Header
           LoginStatus={updateUser}
@@ -78,6 +79,7 @@ function App() {
           Theme={toggleTheme}
         />
       )}
+      <AnimatePresence>
       <Routes>
         <Route
           path="/"
@@ -125,6 +127,7 @@ function App() {
         <Route path="/Register" element={<Register />} />
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
       </Routes>
+      </AnimatePresence>
       {shouldRenderHeaderFooter && <Footer />}
     </div>
   );

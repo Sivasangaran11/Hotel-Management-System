@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./styles/styles.css";
 import { Link } from "react-router-dom";
+import {motion} from "framer-motion"
 
 const backendUri = import.meta.env.VITE_BACKEND_URI;
 
@@ -126,7 +127,10 @@ const Table = (props) => {
   };
 
   return (
-    <div>
+    <motion.div
+    initial = {{opacity:0}}
+    animate = {{opacity:1}}
+    exit = {{opacity:0}}>
       <div className="l-table">
         <table>
           <thead>
@@ -186,14 +190,17 @@ const Table = (props) => {
           </tbody>
         </table>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
 const BookedTables = (props) => {
   const tablesBooked = props.bookedTables;
   return (
-    <div className="l-table">
+    <motion.div className="l-table"
+    initial = {{opacity:0}}
+    animate = {{opacity:1}}
+    exit = {{opacity:0}}>
       <h2>Booked Tables: {tablesBooked.length}</h2>
       <table>
         <thead>
@@ -224,7 +231,7 @@ const BookedTables = (props) => {
       <Link to="/table" className="back-table">
         Back to Table
       </Link>
-    </div>
+    </motion.div>
   );
 };
 

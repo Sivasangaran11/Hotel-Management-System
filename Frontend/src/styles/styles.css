@@ -812,20 +812,3 @@ tr:hover {
   height: 200px;
 }
 
-.Login-loader-container {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Center the loader horizontally */
- 
-}
-
-.loader {
-  display: flex;
-  align-items: center;
-  transform: translateX(20px);
-  transition: transform 300ms ease-in-out;
-}
-
-.loader.animate {
-  transform: translateX(0px);
-}
