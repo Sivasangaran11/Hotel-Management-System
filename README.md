@@ -40,9 +40,9 @@ To run the project please follow the Installation Instructions
 
 # Backend (.env)
 
-   -PORT: Port number for the Express server.
-   -MONGO_URI: MongoDB connection URI.
-   -JWT_SECRET: Secret key for JWT token.
+-PORT: Port number for the Express server.
+-MONGO_URI: MongoDB connection URI.
+-JWT_SECRET: Secret key for JWT token.
 # Frontend (.env)
 
    VITE_API_BASE_URL: Base URL for the backend API.
