@@ -386,7 +386,8 @@ img {
 }
 
 .menu__img {
-  width: 100px;
+  width: 200px;
+  height: 140px;
   align-self: center;
   margin-bottom: var(--mb-2);
 }

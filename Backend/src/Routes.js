@@ -4,6 +4,7 @@ const {
   getUsers,
   getAllFoodItems,
   addFoodItem,
+  deleteFoodItem,
   createOrder,
   getCartItems,
   getCartItemById,
@@ -25,6 +26,7 @@ router.get("/users", getUsers);
 // Menu routes
 router.get("/menu", getAllFoodItems);
 router.post("/menu", addFoodItem);
+router.delete("/menu/:id", deleteFoodItem);
 
 // Cart routes  
 router.post('/cart', createOrder);

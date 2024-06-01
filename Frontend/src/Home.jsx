@@ -1,6 +1,6 @@
 import React from "react";
-import HomeImage from "./assets/img/248.jpg";
-import AboutImage from "./assets/img/about.jpg";
+import HomeImage from "./assets/img/248.png";
+import AboutImage from "./assets/img/about.png";
 import "./styles/styles.css";
 import { Link } from "react-router-dom";
 function HomePage(props) {

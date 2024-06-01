@@ -9,14 +9,9 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import "./styles/Login.css";
 import axios from "axios";
-//import SHA256 from 'crypto-js/sha256';
-//import CryptoJS from 'crypto-js';
-//import argon2 from 'argon2';
-//import bcrypt from "bcrypt";
-import { hashSync, compareSync } from "bcrypt-ts";
+import { compareSync } from "bcrypt-ts";
 import { Link, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-//import './FTP.css';
 //import register from './assets/img/register.svg';
 const isValidEmail = (email) => {
   // Regular expression for email validation
@@ -24,7 +19,6 @@ const isValidEmail = (email) => {
   return emailRegex.test(email);
 };
 const isValidPhoneNumber = (phoneNumber) => {
-  // Regular expression for phone number validation
   const phoneRegex = /^[0-9]{10}$/;
   return phoneRegex.test(phoneNumber);
 };
@@ -258,7 +252,6 @@ const Register = () => {
     try {
       const response = await axios.get(`${backendUri}/api/users`);
       const usersData = response.data;
-      console.log(usersData);
       const existingUsers = usersData.find((user) => user.email === email);
       if (existingUsers) {
         setError("User already exists. Please login.");
@@ -266,14 +259,13 @@ const Register = () => {
         navigateTo("/Login");
         return;
       }
-      const hashedPassword = hashSync(password);
 
       const user = {
         name: name,
         email: email,
         address: address,
         phoneNumber: phoneNumber,
-        password: hashedPassword,
+        password: password,
       };
 
       await axios.post(`${backendUri}/api/users`, user);
