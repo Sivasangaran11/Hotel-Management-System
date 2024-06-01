@@ -100,7 +100,7 @@ const Services= () => {
           <div className="services__container bd-grid">
               {/* SVG images were here */}
               <div className="services__content">
-              <svg class="services__img" xmlns="http://www.w3.org/2000/svg">
+              <svg className="services__img" xmlns="http://www.w3.org/2000/svg">
                           <path d="M45.3205 21.5702L44.6357 19.3163C43.7659 16.756 40.9852 15.3857 38.4249
                           16.2556C36.9847 16.7449 35.8536 17.876 35.3643 19.3163L34.6795 21.5702C34.1032
                           23.471 33.9823 25.4807 34.3264 27.4368C34.6403 29.0838 35.6859 30.4987 37.168
