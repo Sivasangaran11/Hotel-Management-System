@@ -1,6 +1,6 @@
 import React from "react";
-import HomeImage from "./assets/img/248.png";
-import AboutImage from "./assets/img/about.png";
+import HomeImage from "/img/248.png";
+import AboutImage from "/img/about.png";
 import "./styles/styles.css";
 import { Link } from "react-router-dom";
 import {motion} from "framer-motion"

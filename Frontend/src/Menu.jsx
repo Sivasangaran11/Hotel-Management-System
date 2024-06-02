@@ -4,7 +4,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import "./styles/style-cart.css";
 import "boxicons/css/boxicons.min.css";
-import loadingGif from './assets/img/loader.gif';
+import loadingGif from '/img/loader.gif';
 
 
 const backendUri = import.meta.env.VITE_BACKEND_URI;
@@ -72,7 +72,7 @@ const Menu = (props) => {
             {foodItems.map((item) => (
               <div key={item._id} className="menu__content">
                 <img
-                  src={`src/assets/img/${item.source}`}
+                  src={`/img/${item.source}`}
                   alt={item.name}
                   className="menu__img"
                 />
@@ -199,7 +199,7 @@ const Cart = (props) => {
             <div className="Cart-Items" key={selectedItem._id}>
               <div className="image-box">
                 <img
-                  src={`src/assets/img/${selectedItem.source}`}
+                  src={`/img/${selectedItem.source}`}
                   alt={selectedItem.name}
                   className="menu__img"
                 />

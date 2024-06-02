@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import log from "./assets/img/log.svg";
+import log from "/img/log.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFacebookF,
@@ -12,7 +12,7 @@ import axios from "axios";
 import { compareSync } from "bcrypt-ts";
 import { Link, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-import register from './assets/img/register.svg';
+import register from '/img/register.svg';
 import {motion} from "framer-motion"
 
 const isValidEmail = (email) => {
