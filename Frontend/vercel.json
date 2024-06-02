@@ -1,0 +1,52 @@
+{
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/"
+    },
+    {
+      "src": "/menu",
+      "dest": "/"
+    },
+    {
+      "src": "/cart",
+      "dest": "/"
+    },
+    {
+      "src": "/congrats",
+      "dest": "/"
+    },
+    {
+      "src": "/table",
+      "dest": "/"
+    },
+    {
+      "src": "/BookedTables",
+      "dest": "/"
+    },
+    {
+      "src": "/About",
+      "dest": "/"
+    },
+    {
+      "src": "/Services",
+      "dest": "/"
+    },
+    {
+      "src": "/Contact",
+      "dest": "/"
+    },
+    {
+      "src": "/Login",
+      "dest": "/"
+    },
+    {
+      "src": "/Register",
+      "dest": "/"
+    },
+    {
+      "src": "/ForgotPassword",
+      "dest": "/"
+    }
+  ]
+}
