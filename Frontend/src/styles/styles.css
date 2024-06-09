@@ -95,7 +95,6 @@ html {
   line-height: 1.6;
 }
 
-
 h1,
 h2,
 h3,
@@ -118,8 +117,6 @@ img {
   max-width: 100%;
   height: auto;
 }
-
-
 
 .section-title,
 .section-subtitle {
@@ -160,9 +157,8 @@ img {
   z-index: var(--z-fixed);
   background-color: var(--body-color);
 }
-.l-main{
+.l-main {
   background-color: var(--body-color);
-
 }
 
 /*========== NAV ==========*/
@@ -174,8 +170,9 @@ img {
   align-items: center;
 }
 
+
 @media screen and (max-width: 768px) {
-  .nav__menu {
+  .nav__menu{
     position: fixed;
     top: -100%;
     left: 0;
@@ -189,7 +186,6 @@ img {
     z-index: var(--z-fixed);
   }
 }
-
 .nav__item {
   margin-bottom: var(--mb-2);
 }
@@ -234,7 +230,9 @@ img {
 .show-menu {
   top: var(--header-height);
 }
-
+.section-subtitle {
+  height: 8vh;
+}
 /* Active menu */
 .active-link {
   color: var(--first-color);
@@ -278,7 +276,7 @@ img {
 
 /*========== HOME ==========*/
 .home__container {
-  height: calc(100vh - var(--header-height));
+  height: calc(130vh - var(--header-height));
   align-content: center;
 }
 
@@ -371,8 +369,8 @@ img {
   grid-template-columns: repeat(2, 1fr);
   justify-content: center;
 }
-.l-menu{
-  background-color: var(--body-color) ;
+.l-menu {
+  background-color: var(--body-color);
 }
 .menu__content {
   position: relative;
@@ -401,6 +399,7 @@ img {
 
 .menu__name {
   font-size: var(--normal-font-size);
+  height: 20%;
 }
 
 .menu__detail,
@@ -440,7 +439,7 @@ img {
 }
 
 /*========== FOOTER ==========*/
-.l-footer{
+.l-footer {
   background-color: var(--body-color);
 }
 .footer__container {
@@ -548,7 +547,7 @@ img {
   }
 
   .home__container {
-    height: 100vh;
+    height: 120vh;
     justify-items: center;
   }
 
@@ -657,11 +656,11 @@ img {
 }
 
 /* TABLE */
-.l-table{
-  background-color: var(--body-color) ;
+.l-table {
+  background-color: var(--body-color);
 }
-.l-form{
-  padding: 0px ;
+.l-form {
+  padding: 0px;
 }
 table {
   /* position: absolute; */
@@ -679,7 +678,6 @@ table {
   background-color: var(--container-color);
   color: var(--text-color);
 }
-
 
 tr {
   transition: all 0.2s ease-in;
@@ -703,10 +701,10 @@ tr:hover {
   transform: scale(1.02);
   box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.2), -1px -1px 8px rgba(0, 0, 0, 0.2);
 }
-.back-table{
+.back-table {
   display: flex;
-	text-decoration: none;	
-	color: var(--first-color-alt);
+  text-decoration: none;
+  color: var(--first-color-alt);
   padding: 10px;
   margin-left: 70%;
 }
@@ -811,4 +809,3 @@ tr:hover {
   width: 200px;
   height: 200px;
 }
-

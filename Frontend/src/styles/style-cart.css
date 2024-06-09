@@ -25,7 +25,7 @@
 	--font-medium: 500;
 	--font-semi-bold: 600;
   
-	/*========== Margenes ==========*/
+	/*========== Margines ==========*/
 	--mb-1: 0.5rem;
 	--mb-2: 1rem;
 	--mb-3: 1.5rem;
@@ -83,19 +83,20 @@
   }
 .l-cart{
 	background-color: var(--body-color);
+	width: auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .CartContainer{
 	display:inline-table;
-	margin-top: 100px ;
-	margin-left: 100px;
-	margin-bottom: 50px;
-	width: 80%;
-	height: 90%;
+	font-size: var(--normal-font-size);
+    width:70rem;
 	background-color: #ffffff;
     border-radius: 20px;
     box-shadow: 0px 10px 20px #1687d933;
-	padding: 1rem;
+	padding: 3rem;
 	background-color: var(--container-color);
 	color:var(--text-color)
 	
@@ -108,11 +109,11 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	padding: 30px;
+	padding: 1rem;
 }
 
 .Heading{
-	font-size: 30px;
+	font-size: var(--biggest-font-size);
 	font-family: 'Open Sans';
 	font-weight: 700;
 }
@@ -140,25 +141,25 @@
 	width: 80%;
 	height: 30%;
 	display: flex;
+	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
 }
 .image-box{
-	width: 15%;
 	text-align: center;
 }
 .about{
 	height: 100%;
-	width: 30%;
+	width: 50%;
+	text-align: center;
 	
 }
 .title{
 	padding:1rem;
-	line-height: 10px;
-	font-size: 22px;
+	font-size: var(--h1-font-size);
 	font-family: 'Open Sans';
 	font-weight: 800;
-	color: var(--title-color)
+	color: var(--title-color);
 }
 .subtitle{
 	line-height: 10px;
@@ -196,7 +197,7 @@
 
 .prices{
 	height: 100%;
-	text-align: right;
+	text-align: center;
 }
 .amount{
 
@@ -234,9 +235,11 @@ hr{
 	margin-right: 5%;
 }
 .checkout{
-	float: right;
+	position: relative;
+	left: 70%;
+	width: 20%;
+	align-items: center;
 	margin-right: 10%;
-	width: 28%;
 }
 .total{
 	width: 100%;
@@ -244,7 +247,7 @@ hr{
 	justify-content: space-between;
 }
 .Subtotal{
-	font-size: 22px;
+	font-size: var(--font-medium);
 	font-family: 'Open Sans';
 	font-weight: 700;
 }
@@ -323,4 +326,17 @@ hr{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+@media (max-width: 768px) {
+	.Cart-Items {
+		flex-direction: column;
+		margin: 3vh;
+	}
+	.about{
+		width:100%;
+	}
+	.checkout{
+		width:100%;
+		left:0px;
+	}
 }
