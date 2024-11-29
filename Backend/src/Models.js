@@ -6,6 +6,11 @@ const userSchema = new mongoose.Schema({
   address: { type: String, required: true },
   phoneNumber: { type: String, required: true },
   password: { type: String, required: true, maxlength: 60  },
+  role: {
+    type: String,
+    enum: ["Customer", "Staff", "Manager", "Admin"],
+    default: "Customer", // Default role for new users
+  },
 });
 
 const foodItemSchema = new mongoose.Schema({
@@ -52,8 +57,15 @@ const TableSchema = new mongoose.Schema({
   },
 });
 
+const refreshTokenSchema = new mongoose.Schema({
+  token: { type: String, required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  expiryDate: { type: Date, required: true }
+});
+
 const User = mongoose.model("User", userSchema);
 const FoodItem = mongoose.model("FoodItem", foodItemSchema);
 const CartItem = mongoose.model("CartItem", CartItemSchema);
 const Table = mongoose.model("Table", TableSchema);
-module.exports = { User, FoodItem, CartItem, Table };
+const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchema);
+module.exports = { User, FoodItem, CartItem, Table, RefreshToken };

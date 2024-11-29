@@ -9,6 +9,20 @@ const options = {
       version: '1.0.0',
       description: 'API documentation for HP-restaurant application',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
   },
   apis: ['./src/routes.js'], // Path to the API routes
 };

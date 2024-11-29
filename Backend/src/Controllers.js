@@ -1,5 +1,37 @@
 const bcrypt = require("bcryptjs");
-const { User, FoodItem, CartItem, Table } = require("./Models");
+const { User, FoodItem, CartItem, Table, RefreshToken } = require("./Models");
+const jwt = require("jsonwebtoken");
+const path = require("path");
+
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
+
+const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
+const REFRESH_SECRET_KEY = process.env.REFRESH_TOKEN_SECRET;
+
+const generateAccessToken = (user) => {
+  return jwt.sign({ id: user._id, email: user.email, role: user.role }, SECRET_KEY, {
+    expiresIn: "15m",
+  });
+};
+
+const generateRefreshToken = async (user) => {
+  const refreshToken = jwt.sign(
+    { id: user._id, email: user.email },
+    REFRESH_SECRET_KEY,
+    { expiresIn: "7d" }
+  );
+  const expiryDate = new Date();
+  expiryDate.setDate(expiryDate.getDate() + 7);
+
+  const newRefreshToken = new RefreshToken({
+    token: refreshToken,
+    userId: user._id,
+    expiryDate: expiryDate,
+  });
+
+  await newRefreshToken.save();
+  return refreshToken;
+};
 
 // Register a new user
 const registerUser = async (req, res) => {
@@ -18,6 +50,7 @@ const registerUser = async (req, res) => {
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
+    const role = token ? decoded.role : 'Customer';
 
     const user = new User({
       name,
@@ -25,6 +58,7 @@ const registerUser = async (req, res) => {
       address,
       phoneNumber,
       password: hashedPassword,
+      role
     });
 
     await user.save();
@@ -32,6 +66,71 @@ const registerUser = async (req, res) => {
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).json({ message: "Error registering user" });
+  }
+};
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "User does not exist. Please register." });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Incorrect password." });
+    }
+
+    const token = generateAccessToken(user);
+    const refreshToken = await generateRefreshToken(user);
+
+    // Send tokens to client
+    res.json({ token, refreshToken, userId: user._id });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res
+      .status(500)
+      .json({ message: "Failed to login. Please try again later." });
+  }
+};
+
+//Refresh token
+
+const refreshToken = async (req, res) => {
+  const { token: requestToken } = req.body;
+
+  if (!requestToken) {
+    return res.status(403).json({ message: "Refresh Token is required" });
+  }
+
+  try {
+    const refreshToken = await RefreshToken.findOne({ token: requestToken });
+
+    if (!refreshToken) {
+      return res
+        .status(403)
+        .json({ message: "Refresh token is not in database!" });
+    }
+
+    if (refreshToken.expiryDate < new Date()) {
+      await RefreshToken.findByIdAndRemove(refreshToken._id);
+      return res
+        .status(403)
+        .json({
+          message: "Refresh token was expired. Please make a new login request",
+        });
+    }
+
+    const user = await User.findById(refreshToken.userId);
+    const newAccessToken = generateAccessToken(user);
+
+    return res.json({ token: newAccessToken });
+  } catch (err) {
+    return res.status(500).send({ message: err });
   }
 };
 
@@ -44,6 +143,10 @@ const getUsers = async (req, res) => {
     console.error("Error fetching users:", error);
     res.status(500).json({ message: "Error fetching users" });
   }
+};
+
+const protectedRoute = (req, res) => {
+  res.json({ message: "This is a protected route", user: req.user });
 };
 
 // Get all food items
@@ -88,15 +191,14 @@ const addFoodItem = async (req, res) => {
     res.status(500).json({ message: "Error adding food item" });
   }
 };
-const deleteFoodItem = async(req, res,) => {
-  try{
+const deleteFoodItem = async (req, res) => {
+  try {
     await FoodItem.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Food item deleted' });
+    res.status(200).json({ message: "Food item deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting food item", error });
   }
-  catch(error){
-    res.status(500).json({ message: 'Error deleting food item', error });
-  }
-}
+};
 
 //Cart
 
@@ -108,20 +210,21 @@ const createOrder = async (req, res) => {
 
     await CartItem.insertMany(orderItems);
 
-    res.status(201).json({ message: "Order created successfully"});
+    res.status(201).json({ message: "Order created successfully" });
   } catch (error) {
     console.error("Error creating order:", error);
-    res.status(500).json({ message: "Error creating order", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error creating order", error: error.message });
   }
 };
-
 
 const getCartItems = async (req, res) => {
   try {
     const cartItems = await CartItem.find();
     res.status(200).json(cartItems);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching cart items', error });
+    res.status(500).json({ message: "Error fetching cart items", error });
   }
 };
 
@@ -129,33 +232,38 @@ const getCartItemById = async (req, res) => {
   try {
     const cartItem = await CartItem.findById(req.params.id);
     if (!cartItem) {
-      return res.status(404).json({ message: 'Cart item not found' });
+      return res.status(404).json({ message: "Cart item not found" });
     }
     res.status(200).json(cartItem);
   } catch (error) {
     console.error("Error fetching cart item:", error);
-    res.status(500).json({ message: "Error fetching cart item", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching cart item", error: error.message });
   }
 };
 
-
-const updateCartItem = async(req, res) => {
+const updateCartItem = async (req, res) => {
   try {
-    const updatedItem = await CartItem.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const updatedItem = await CartItem.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+      }
+    );
     res.status(200).json(updatedItem);
   } catch (error) {
-    res.status(500).json({ message: 'Error updating cart item', error });
+    res.status(500).json({ message: "Error updating cart item", error });
   }
-;}
+};
 
 const deleteCartItem = async (req, res) => {
   try {
     await CartItem.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: 'Cart item deleted' });
+    res.status(200).json({ message: "Cart item deleted" });
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting cart item', error });
+    res.status(500).json({ message: "Error deleting cart item", error });
   }
 };
 
@@ -171,13 +279,13 @@ const reserveTable = async (req, res) => {
       date,
       accommodation,
       reservee,
-      reserved: true
+      reserved: true,
     });
 
     await table.save();
     res.status(201).send(table);
   } catch (error) {
-    res.status(400).send({ error: 'Error reserving table' });
+    res.status(400).send({ error: "Error reserving table" });
   }
 };
 
@@ -187,12 +295,39 @@ const getAllTables = async (req, res) => {
     const tables = await Table.find();
     res.status(200).send(tables);
   } catch (error) {
-    res.status(400).send({ error: 'Error fetching tables' });
+    res.status(400).send({ error: "Error fetching tables" });
   }
 };
 
+//Assigning role to the users
+
+const assignRole = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true } // Return the updated document
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({ message: `Role updated to ${user.role}` });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   registerUser,
+  login,
+  refreshToken,
+  protectedRoute,
   getUsers,
   getAllFoodItems,
   addFoodItem,
@@ -204,4 +339,5 @@ module.exports = {
   deleteCartItem,
   reserveTable,
   getAllTables,
+  assignRole
 };

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import "./styles/styles.css";
+import "../styles/styles.css";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import "./styles/style-cart.css";
+import "../styles/style-cart.css";
 import "boxicons/css/boxicons.min.css";
 import loadingGif from '/img/loader.gif';
 

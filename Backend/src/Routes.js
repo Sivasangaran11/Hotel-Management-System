@@ -1,6 +1,9 @@
 const express = require("express");
 const {
   registerUser,
+  login,
+  refreshToken,
+  protectedRoute,
   getUsers,
   getAllFoodItems,
   addFoodItem,
@@ -11,9 +14,10 @@ const {
   updateCartItem,
   deleteCartItem,
   reserveTable,
-  getAllTables
+  getAllTables,
+  assignRole
 } = require("./Controllers");
-
+const {authenticateToken, verifyAdmin} = require('./Middleware');
 const router = express.Router();
 
 /**
@@ -54,6 +58,83 @@ router.post("/users", registerUser);
  *         description: Successful response with a list of users.
  */
 router.get("/users", getUsers);
+
+/**
+ * @swagger
+ * /api/login:
+ *   post:
+ *     summary: Login a user
+ *     description: Authenticate user and generate a JWT token and refresh token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                 refreshToken:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/login', login);
+
+/**
+ * @swagger
+ * /api/refresh-token:
+ *   post:
+ *     summary: Refresh the access token
+ *     description: Generate a new access token using the refresh token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: New access token generated
+ *       403:
+ *         description: Refresh token expired or invalid
+ *       500:
+ *         description: Internal server error
+ */
+router.post('/refresh-token', refreshToken);
+
+/**
+ * @swagger
+ * /api/protected:
+ *   get:
+ *     summary: Protected route
+ *     description: Access a protected route with a valid JWT
+ *     responses:
+ *       200:
+ *         description: Successful response
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ */
+router.get('/protected', authenticateToken, protectedRoute);
 
 // Menu routes
 /**
@@ -182,6 +263,9 @@ router.put('/cart/:id', updateCartItem);
 router.delete('/cart/:id', deleteCartItem);
 
 // Table routes
+
+//Reserve table
+
 /**
  * @swagger
  * /api/table:
@@ -194,9 +278,11 @@ router.delete('/cart/:id', deleteCartItem);
  */
 router.post('/table', reserveTable);
 
+//Get tables 
+
 /**
  * @swagger
- * /table:
+ * /api/table:
  *   get:
  *     summary: Get all table reservations
  *     description: Retrieve a list of all table reservations.
@@ -204,6 +290,47 @@ router.post('/table', reserveTable);
  *       200:
  *         description: Successful response with a list of table reservations.
  */
-router.get('/api/table', getAllTables);
+router.get('/table', getAllTables);
+
+// Admin routes
+
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   put:
+ *     summary: Assign a role to a user
+ *     description: Admins can assign a specific role to a user.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the user to assign a role.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 example: Manager
+ *     responses:
+ *       200:
+ *         description: Role successfully assigned.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       403:
+ *         description: Access denied.
+ *       404:
+ *         description: User not found.
+ */
+
+router.put('/users/:userId', verifyAdmin, assignRole);
+
 
 module.exports = router;

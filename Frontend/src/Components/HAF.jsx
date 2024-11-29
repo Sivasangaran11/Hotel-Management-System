@@ -6,7 +6,7 @@ import {
   faTwitter,
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
-import "./styles/styles.css";
+import "../styles/styles.css";
 
 function Header(props) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
