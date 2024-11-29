@@ -7,16 +7,14 @@ import {
   faGoogle,
   faLinkedinIn,
 } from "@fortawesome/free-brands-svg-icons";
-import "./styles/Login.css";
-import axios from "axios";
-import { compareSync } from "bcrypt-ts";
+import "../styles/Login.css";
+import axios from "./axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
 import BeatLoader from "react-spinners/BeatLoader";
-import register from '/img/register.svg';
-import {motion} from "framer-motion"
+import register from "/img/register.svg";
+import { motion } from "framer-motion";
 
 const isValidEmail = (email) => {
-  // Regular expression for email validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
@@ -42,7 +40,6 @@ const Login = (props) => {
       return;
     }
 
-    // Validate email and password fields
     if (!email.trim()) {
       setError("Please enter your email.");
       return;
@@ -60,50 +57,50 @@ const Login = (props) => {
 
     try {
       setLoading(true);
-      const response = await axios.get(`${backendUri}/api/users`);
-      const usersData = response.data;
+      const response = await axios.post("/api/login", { email, password });
+      const { token, userId } = response.data;
 
-      // Find user by email in the fetched data
-      const user = usersData.find((user) => user.email === email);
+      // Save the token and userId in local storage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
 
-      if (!user) {
-        window.alert("User does not exist. Please register.");
-        navigateTo("/Register");
-        return;
-      }
-
-      // Compare the entered password with the hashed password using bcrypt-ts
-      const passwordMatch = compareSync(password, user.password);
-      if (!passwordMatch) {
-        window.alert("Incorrect password.");
-        return;
-      }
-
-      props.currentUser(user._id);
+      props.currentUser(token, userId);
       setLoading(false);
       navigateTo("/");
     } catch (error) {
       console.error("Error logging in:", error);
-      setError("Failed to login. Please try again later.");
       setLoading(false);
+
+      // Check the response to see if the error indicates that the user does not exist
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "User does not exist. Please register."
+      ) {
+        window.alert(
+          "User does not exist. Redirecting to the registration page."
+        );
+        navigateTo("/register");
+      } else {
+        setError("Failed to login. Please try again later.");
+      }
     }
   };
-
   return (
-    <motion.div 
-    className="container"
-    initial = {{opacity:0}}
-    animate = {{opacity:1}}
-    exit = {{opacity:0}}
+    <motion.div
+      className="container"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
     >
       <div className="Login-loader-container">
-              {loading && (
-                <div className={`loader ${loading ? "animate" : ""}`}>
-                  <h4>loading </h4>
-                  <BeatLoader color="#069C54" height={15} size={10} />
-                </div>
-              )}
-            </div>
+        {loading && (
+          <div className={`loader ${loading ? "animate" : ""}`}>
+            <h4>loading </h4>
+            <BeatLoader color="#069C54" height={15} size={10} />
+          </div>
+        )}
+      </div>
       <div className="forms-container">
         <div className="signin-signup">
           <form onSubmit={handleSubmit} className="sign-in-form">
@@ -186,44 +183,44 @@ const ForgotPassword = (props) => {
   };
 
   return (
-      <div className="container-fp">
-        <div className="form-container-fp">
-          <form onSubmit={handleSubmit} className="otp-form">
-            <h2 className="title">Change Password</h2>
-            {error && <p className="error">{error}</p>}
-            <div className="input-field">
-              <i className="fas fa-user"></i>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                placeholder="Your Email"
-              />
-            </div>
-            <div className="input-field">
-              <i className="fas fa-lock"></i>
-              <input
-                value={password1}
-                onChange={(e) => setPassword1(e.target.value)}
-                type="password"
-                placeholder="New Password"
-              />
-            </div>
-            <div className="input-field">
-              <i className="fas fa-lock"></i>
-              <input
-                value={password2}
-                onChange={(e) => setPassword2(e.target.value)}
-                type="password"
-                placeholder="Confirm New Password"
-              />
-            </div>
-            <Link to="login">
-              <input type="submit" value="Submit" className="btn solid" />
-            </Link>
-          </form>
-        </div>
+    <div className="container-fp">
+      <div className="form-container-fp">
+        <form onSubmit={handleSubmit} className="otp-form">
+          <h2 className="title">Change Password</h2>
+          {error && <p className="error">{error}</p>}
+          <div className="input-field">
+            <i className="fas fa-user"></i>
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              placeholder="Your Email"
+            />
+          </div>
+          <div className="input-field">
+            <i className="fas fa-lock"></i>
+            <input
+              value={password1}
+              onChange={(e) => setPassword1(e.target.value)}
+              type="password"
+              placeholder="New Password"
+            />
+          </div>
+          <div className="input-field">
+            <i className="fas fa-lock"></i>
+            <input
+              value={password2}
+              onChange={(e) => setPassword2(e.target.value)}
+              type="password"
+              placeholder="Confirm New Password"
+            />
+          </div>
+          <Link to="login">
+            <input type="submit" value="Submit" className="btn solid" />
+          </Link>
+        </form>
       </div>
+    </div>
   );
 };
 const Register = () => {
@@ -286,19 +283,20 @@ const Register = () => {
   };
 
   return (
-    <motion.div 
-    className="container sign-up-mode"
-    initial = {{opacity:0}}
-    animate = {{opacity:1}}
-    exit = {{opacity:0}}>
+    <motion.div
+      className="container sign-up-mode"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <div className="Login-loader-container">
-              {loading && (
-                <div className={`loader ${loading ? "animate" : ""}`}>
-                  <h4>loading </h4>
-                  <BeatLoader color="#36d7b7" height={15} size={10} />
-                </div>
-              )}
-            </div>
+        {loading && (
+          <div className={`loader ${loading ? "animate" : ""}`}>
+            <h4>loading </h4>
+            <BeatLoader color="#36d7b7" height={15} size={10} />
+          </div>
+        )}
+      </div>
       <div className="forms-container">
         <div className="signin-signup">
           <form method="POST" onSubmit={handleSubmit} className="sign-up-form">

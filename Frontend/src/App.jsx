@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { Login, ForgotPassword, Register } from "./LoginPage";
-import { HomePage, AboutPage, Contact, Services } from "./Home";
-import { Menu, Cart } from "./Menu";
-import {Table, BookedTables} from "./table.jsx";
-import { Header, Footer } from "./HAF";
-import CongratsPage from "./Congrats";
+import { Login, ForgotPassword, Register } from "./Components/LoginPage.jsx";
+import { HomePage, AboutPage, Contact, Services } from "./Components/Home.jsx";
+import { Menu, Cart } from "./Components/Menu.jsx";
+import {Table, BookedTables} from "./Components/table.jsx";
+import { Header, Footer } from "./Components/HAF.jsx";
+import CongratsPage from "./Components/Congrats.jsx";
 import {AnimatePresence} from "framer-motion"
 
 function App() {
-  const [userID, setUserID] = useState(localStorage.getItem("userID") || null);
+  const [userID, setUserID] = useState(localStorage.getItem("userId") || null);//Review the userId 
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
@@ -28,14 +28,14 @@ function App() {
   );
 
   useEffect(() => {
-    localStorage.setItem("userID", userID);
+    //localStorage.setItem("userID", userID);
     localStorage.setItem("isLoggedIn", isLoggedIn);
     localStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
     localStorage.setItem("isVisibleTable", isVisibleTable);
     localStorage.setItem("isVisibleCart", isVisibleCart);
     localStorage.setItem("isLightTheme", isLightTheme);
   }, [
-    userID,
+    //userID,
     isLoggedIn,
     selectedFoodItem,
     isVisibleTable,
@@ -48,9 +48,9 @@ function App() {
     setBookedTables(storedBookedTables);
   }, []);
 
-  const updateUser = (newUser) => {
+  const updateUser = (newUserToken,newUser) => {
     setUserID(newUser);
-    setIsLoggedIn(!!newUser);
+    setIsLoggedIn(!!newUserToken);
   };
 
   const updateFood = (newFood) => setSelectedFoodItem(newFood);

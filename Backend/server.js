@@ -2,21 +2,41 @@ const express = require("express");
 const mongoose = require("mongoose");
 const routes = require("./src/Routes");
 const cors = require("cors");
-require("dotenv").config(); 
+require("dotenv").config();
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
 
 const app = express();
 app.use(express.json());
 
-// Connect to MongoDB
-const mongoURI = process.env.MONGO_URI;
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+// Validate environment variables
+if (!process.env.MONGO_URI || !process.env.PORT) {
+  throw new Error("MONGO_URI or PORT is not defined in the environment variables");
+}
 
-mongoose.connection.once("open", () => {
-  console.log("Connected to MongoDB");
-});
+// Connect to MongoDB
+(async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("CONNECTED TO DATABASE SUCCESSFULLY");
+  } catch (error) {
+    console.error("COULD NOT CONNECT TO DATABASE:", error.message);
+    process.exit(1); // Exit if the database connection fails
+  }
+})();
+
 
 // Enable CORS
 app.use(cors());
+
+// Serve Swagger docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Route to access raw Swagger JSON
+app.get("/swagger.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
 
 // Use routes
 app.use("/api", routes);
