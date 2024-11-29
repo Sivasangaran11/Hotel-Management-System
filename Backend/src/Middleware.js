@@ -35,7 +35,6 @@ const verifyAdmin = (req, res, next) => {
     const decoded = jwt.verify(token, SECRET_KEY); 
     req.user = decoded; // Populate req.user with the token payload
     if (req.user.role !== 'Admin') {
-      console.log(decoded)
       return res.status(403).json({ message: 'Access denied. Admins only.' });
     }
     next(); // Proceed to the next middleware
@@ -44,4 +43,29 @@ const verifyAdmin = (req, res, next) => {
   }
 };
 
-module.exports = {authenticateToken, verifyAdmin};
+//Admin or manager authentication for Food items management
+
+const verifyAdminOrManager = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; 
+
+  if (!token) {
+    return res.status(401).json({ message: "Access token missing" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
+    req.user = decoded; 
+
+    // Check if the user has Admin or Manager role
+    if (req.user.role === 'Admin' || req.user.role === 'Manager') {
+      next(); 
+    } else {
+      return res.status(403).json({ message: "Access denied. Admins and Managers only." });
+    }
+  } catch (error) {
+    res.status(403).json({ message: "Invalid or expired token" });
+  }
+};
+
+
+module.exports = {authenticateToken, verifyAdmin, verifyAdminOrManager};

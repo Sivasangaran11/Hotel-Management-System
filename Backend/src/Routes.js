@@ -17,7 +17,7 @@ const {
   getAllTables,
   assignRole
 } = require("./Controllers");
-const {authenticateToken, verifyAdmin} = require('./Middleware');
+const {authenticateToken, verifyAdmin, verifyAdminOrManager} = require('./Middleware');
 const router = express.Router();
 
 /**
@@ -154,31 +154,71 @@ router.get("/menu", getAllFoodItems);
  * /api/menu:
  *   post:
  *     summary: Add a new food item
- *     description: Add a new food item to the menu.
+ *     description: Only Admin and Manager roles can add new food items.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ItemName:
+ *                 type: string
+ *                 example: "Burger"
+ *               price:
+ *                 type: number
+ *                 example: 5.99
+ *               quantity:
+ *                 type: number
+ *                 example: 10
+ *               source:
+ *                 type: string
+ *                 example: "Kitchen"
+ *               reservee:
+ *                 type: string
+ *                 example: "None"
  *     responses:
  *       201:
- *         description: Food item added successfully.
+ *         description: Food item added successfully
+ *       400:
+ *         description: Bad Request
+ *       403:
+ *         description: Access denied
+ *       500:
+ *         description: Server error
  */
-router.post("/menu", addFoodItem);
+
+router.post("/menu",verifyAdminOrManager, addFoodItem);
 
 /**
  * @swagger
  * /api/menu/{id}:
  *   delete:
  *     summary: Delete a food item
- *     description: Delete a food item from the menu by ID.
+ *     description: Only Admin and Manager roles can delete food items.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - in: path
- *         name: id
+ *       - name: id
+ *         in: path
  *         required: true
- *         description: ID of the food item to delete.
  *         schema:
  *           type: string
+ *           example: "64b7c6f8f9650a12dc5e6c5d"
  *     responses:
  *       200:
- *         description: Food item deleted successfully.
+ *         description: Food item deleted successfully
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: Food item not found
+ *       500:
+ *         description: Server error
  */
-router.delete("/menu/:id", deleteFoodItem);
+
+router.delete("/menu/:id",verifyAdminOrManager, deleteFoodItem);
 
 // Cart routes
 /**
