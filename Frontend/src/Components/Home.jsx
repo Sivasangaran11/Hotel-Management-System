@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import {motion} from "framer-motion"
 
 function HomePage(props) {
+  
   return (
     <motion.div
     initial={{ x: 300, opacity: 0 }}
