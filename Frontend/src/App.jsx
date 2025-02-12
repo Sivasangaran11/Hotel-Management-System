@@ -7,6 +7,7 @@ import {Table, BookedTables} from "./Components/table.jsx";
 import { Header, Footer } from "./Components/HAF.jsx";
 import CongratsPage from "./Components/Congrats.jsx";
 import {AnimatePresence} from "framer-motion"
+import { Navigate } from "react-router-dom";
 
 function App() {
   const [userID, setUserID] = useState(localStorage.getItem("userId") || null);//Review the userId 
@@ -15,7 +16,7 @@ function App() {
   );
   const [bookedTables, setBookedTables] = useState([]);
   const [selectedFoodItem, setSelectedFoodItem] = useState(
-    JSON.parse(localStorage.getItem("selectedFood")) || []
+    JSON.parse(sessionStorage.getItem("selectedFood")) || []
   );
   const [isVisibleTable, setIsVisibleTable] = useState(
     localStorage.getItem("isVisibleTable") === "true"
@@ -30,14 +31,14 @@ function App() {
   useEffect(() => {
     //localStorage.setItem("userID", userID);
     localStorage.setItem("isLoggedIn", isLoggedIn);
-    localStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
+    // sessionStorage.setItem("selectedFood", JSON.stringify(selectedFoodItem));
     localStorage.setItem("isVisibleTable", isVisibleTable);
     localStorage.setItem("isVisibleCart", isVisibleCart);
     localStorage.setItem("isLightTheme", isLightTheme);
   }, [
     //userID,
     isLoggedIn,
-    selectedFoodItem,
+    // selectedFoodItem,
     isVisibleTable,
     isVisibleCart,
     isLightTheme,
@@ -67,6 +68,9 @@ function App() {
     "/Register",
     "/ForgotPassword",
   ].includes(location.pathname);
+  const ProtectedRoute = ({ isLoggedIn, children }) => {
+    return isLoggedIn ? children : <Navigate to="/Login" replace />;
+  };
 
   return (
     <div className={`App ${isLightTheme ? "light-theme" : "dark-theme"}`}>
@@ -105,7 +109,7 @@ function App() {
             />
           }
         />
-        <Route path="/congrats" element={<CongratsPage />} />
+        <Route path="/congrats" element={<CongratsPage userId = {userID} />} />
         <Route
           path="/table"
           element={
@@ -128,7 +132,7 @@ function App() {
         <Route path="/ForgotPassword" element={<ForgotPassword />} />
       </Routes>
       </AnimatePresence>
-      {shouldRenderHeaderFooter && <Footer />}
+      {shouldRenderHeaderFooter && !location.pathname==="/congrats" && <Footer />}
     </div>
   );
 }

@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 require("dotenv").config({ path: path.resolve(__dirname, '../.env') });
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET; 
+const storage = require('./Controllers')
+const multer = require("multer");
+const upload = multer({ storage });
 
 //JWT token authentication
 const authenticateToken = (req, res, next) => {
@@ -46,26 +49,28 @@ const verifyAdmin = (req, res, next) => {
 //Admin or manager authentication for Food items management
 
 const verifyAdminOrManager = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; 
+  const token = req.headers.authorization?.split(' ')[1];
 
   if (!token) {
     return res.status(401).json({ message: "Access token missing" });
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); 
-    req.user = decoded; 
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = decoded;
 
-    // Check if the user has Admin or Manager role
     if (req.user.role === 'Admin' || req.user.role === 'Manager') {
-      next(); 
+      next();
     } else {
+      console.log("Access Denied: User Role -", req.user.role); // Debugging
       return res.status(403).json({ message: "Access denied. Admins and Managers only." });
     }
   } catch (error) {
-    res.status(403).json({ message: "Invalid or expired token" });
+    console.error("JWT Verification Error:", error);
+    return res.status(403).json({ message: "Invalid or expired token" });
   }
 };
 
 
-module.exports = {authenticateToken, verifyAdmin, verifyAdminOrManager};
+
+module.exports = {authenticateToken, verifyAdmin, verifyAdminOrManager, upload};

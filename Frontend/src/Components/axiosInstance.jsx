@@ -1,15 +1,19 @@
-// axiosInstance.js
-import axios from 'axios';
+import axios from "axios";
 
 const backendUri = import.meta.env.VITE_BACKEND_URI;
 
-const api = axios.create({
+const axiosInstance = axios.create({
   baseURL: backendUri,
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true, // Ensure cookies are sent with every request
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
+// Request Interceptor: Attach Access Token to Every Request
+axiosInstance.interceptors.request.use(
+  async (config) => {
+    const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -18,28 +22,37 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-api.interceptors.response.use(
+// Response Interceptor: Handle Token Expiry
+axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
+    if (error.response && error.response.status === 401) {
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        const { data } = await axios.post('http://localhost:3000/refresh-token', { token: refreshToken });
-        localStorage.setItem('token', data.accessToken);
-        api.defaults.headers.Authorization = `Bearer ${data.accessToken}`;
-        return api(originalRequest);
+        // Request a new access token using refresh token stored in cookies
+        const refreshResponse = await axios.post(
+          `${backendUri}/api/refresh`,
+          {},
+          { withCredentials: true } // Send cookies with the request
+        );
+
+        const newAccessToken = refreshResponse.data.accessToken;
+
+        // Store the new token in localStorage
+        localStorage.setItem("token", newAccessToken);
+
+        // Retry the original request with the new token
+        error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+        return axiosInstance(error.config);
       } catch (refreshError) {
-        console.error('Refresh token expired', refreshError);
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-        window.alert('Session expired. Please log in again.');
-        window.location.href = '/login';
+        console.error("Token refresh failed:", refreshError);
+
+        // If refresh fails, log the user out
+        localStorage.removeItem("token");
+        window.location.href = "/login"; // Redirect to login page
       }
     }
     return Promise.reject(error);
   }
 );
 
-export default api;
+export default axiosInstance;

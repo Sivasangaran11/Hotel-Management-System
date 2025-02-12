@@ -5,13 +5,18 @@ const cors = require("cors");
 require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require("./swagger");
+const cookieParser = require("cookie-parser");
+
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 // Validate environment variables
 if (!process.env.MONGO_URI || !process.env.PORT) {
-  throw new Error("MONGO_URI or PORT is not defined in the environment variables");
+  throw new Error(
+    "MONGO_URI or PORT is not defined in the environment variables"
+  );
 }
 
 // Connect to MongoDB
@@ -25,9 +30,13 @@ if (!process.env.MONGO_URI || !process.env.PORT) {
   }
 })();
 
-
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", 
+    credentials: true, // Allow cookies
+  })
+);
 
 // Serve Swagger docs
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

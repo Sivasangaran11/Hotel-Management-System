@@ -16,46 +16,81 @@ const userSchema = new mongoose.Schema({
 const foodItemSchema = new mongoose.Schema({
   ItemName: { type: String, required: true },
   price: { type: Number, required: true },
-  quantity: { type: Number, default: 0 },
   source: { type: String, required: true },
-  reservee: { type: String, default: null },
 });
 
 const CartItemSchema = new mongoose.Schema({
-  foodId: { type: String, required: true },
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-  source: { type: String, required: true },
-  reservee: { type: String, required: true },
-});
-
-const TableSchema = new mongoose.Schema({
-  number: {
+  orderId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  orderedDate: {
+    type: Date,
+    required: true,
+    default: Date.now,
+  },
+  items: [
+    {
+      foodId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "FoodItem", 
+        required: true,
+      },
+      name: {
+        type: String,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+      },
+      price: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
+  totalprice: {
     type: Number,
     required: true,
   },
-  time: {
-    type: String,
+  received: {
+    type: Boolean,
     required: true,
-  },
-  date: {
-    type: String,
-    required: true,
-  },
-  accommodation: {
-    type: String,
-    required: true,
+    default: false, // Initially, order is not received
   },
   reservee: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
-  reserved: {
-    type: Boolean,
-    default: false,
+});
+
+const TableSchema = new mongoose.Schema({
+  number: { type: Number, required: true, unique: true },
+  accommodation: { type: String, required: true },
+  reserved: { type: Boolean, default: false },
+  availableTimeSlots: { type: [String], default: [] },
+});
+
+const reservedTableSchema = new mongoose.Schema({
+  reservee: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  table: {
+    number: { type: Number, required: true },
+    time: { type: String, required: true },
+    date: { type: String, required: true },
+    accommodation: { type: String, required: true },
   },
 });
+
+
+
 
 const refreshTokenSchema = new mongoose.Schema({
   token: { type: String, required: true },
@@ -66,6 +101,7 @@ const refreshTokenSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 const FoodItem = mongoose.model("FoodItem", foodItemSchema);
 const CartItem = mongoose.model("CartItem", CartItemSchema);
-const Table = mongoose.model("Table", TableSchema);
+const reservedTable = mongoose.model("reservedTable", reservedTableSchema);
 const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchema);
-module.exports = { User, FoodItem, CartItem, Table, RefreshToken };
+const Table = mongoose.model("Table", TableSchema);
+module.exports = { User, FoodItem, CartItem, Table, reservedTable, RefreshToken };
