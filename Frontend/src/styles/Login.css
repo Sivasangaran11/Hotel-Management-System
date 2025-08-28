@@ -80,6 +80,35 @@ form.sign-in-form {
   position: relative;
 }
 
+.alert-box {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-left: 5px solid #ffcc00;
+  margin-bottom: 15px;
+  border-radius: 3px;
+  font-size: 14px;
+}
+/* Highlight Red Border on Error */
+.input-field.error {
+  border: 2px solid red;
+  
+}
+
+/* Floating Error Messages */
+.error-message {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  color: red;
+  font-size: 12px;
+  background: rgba(255, 0, 0, 0.1);
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  transform: translateY(3px);
+  z-index: 2;
+}
 .input-field i {
   text-align: center;
   line-height: 55px;

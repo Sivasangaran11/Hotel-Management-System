@@ -1,4 +1,4 @@
-import {React,useState} from "react";
+import {React,useState,} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInstagram,
@@ -7,13 +7,32 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { Link } from "react-router-dom";
 import "../styles/styles.css";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+const backendUri = import.meta.env.VITE_BACKEND_URI;
 function Header(props) {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
-
+  const navigateTo = useNavigate();
   const toggleMenu = () => {
     setIsMenuVisible(!isMenuVisible);
   };
+  const handleLogout = async () => {
+    try {
+      await axios.post(`${backendUri}/api/logout`, {}, { withCredentials: true }); // Ensure cookies are sent
+      props.LoginStatus(null); // Update state to reflect logout
+      localStorage.removeItem("token");
+      localStorage.removeItem("userId");
+      localStorage.setItem("isLoggedIn", "false");
+      localStorage.setItem("isVisibleTable", "false");
+      localStorage.setItem("isVisibleCart", "false");
+      sessionStorage.removeItem("selectedFood"); 
+      window.dispatchEvent(new Event("logout"));
+      navigateTo("/Login"); // Redirect to login page
+    } catch (error) {
+      console.error("Logout failed:", error.response?.data?.message || error.message);
+    }
+  };
+  
 
   return (
     <div>
@@ -62,10 +81,9 @@ function Header(props) {
                 </>
               ) : (
                 <li className="nav__item">
-                  <Link
-                    to="/Login"
+                  <Link to = "/Login"
                     className="nav__link"
-                    onClick={() => props.LoginStatus(null)}
+                    onClick={handleLogout}
                   >
                     Log out
                   </Link>
@@ -134,7 +152,7 @@ function Footer() {
         <div className="footer__container bd-grid">
           <div className="footer__content">
             <a href="#" className="footer__logo">
-              Sappadu
+              HP
             </a>
             <span className="footer__description">Restaurant</span>
             <div>

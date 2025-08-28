@@ -2,12 +2,15 @@ const express = require("express");
 const {
   registerUser,
   login,
+  logOut,
   refreshToken,
   protectedRoute,
   getUsers,
+  getUserById,
   getAllFoodItems,
   addFoodItem,
   deleteFoodItem,
+  uploadMenuImage,
   createOrder,
   getCartItems,
   getCartItemById,
@@ -15,9 +18,16 @@ const {
   deleteCartItem,
   reserveTable,
   getAllTables,
-  assignRole
+  addTable,
+  deleteTable,
+  getAllReservedTables,
+  getTableReservationsByUser,
+  deleteTableReservation,
+  cancelTableReservation,
+  assignRole,
+  getCartItemsByReservee
 } = require("./Controllers");
-const {authenticateToken, verifyAdmin, verifyAdminOrManager} = require('./Middleware');
+const {authenticateToken, verifyAdmin, verifyAdminOrManager, upload} = require('./Middleware');
 const router = express.Router();
 
 /**
@@ -95,6 +105,13 @@ router.get("/users", getUsers);
  */
 router.post('/login', login);
 
+//NEED TO ADD SWAGGER DOCS
+router.post("/logout", logOut);
+
+//NEED TO ADD SWAGGER DOCS
+// Route to get user by ID
+router.get("/users/:id", getUserById);
+
 /**
  * @swagger
  * /api/refresh-token:
@@ -170,15 +187,9 @@ router.get("/menu", getAllFoodItems);
  *               price:
  *                 type: number
  *                 example: 5.99
- *               quantity:
- *                 type: number
- *                 example: 10
  *               source:
  *                 type: string
- *                 example: "Kitchen"
- *               reservee:
- *                 type: string
- *                 example: "None"
+ *                 example: "Burger.png"
  *     responses:
  *       201:
  *         description: Food item added successfully
@@ -220,6 +231,11 @@ router.post("/menu",verifyAdminOrManager, addFoodItem);
 
 router.delete("/menu/:id",verifyAdminOrManager, deleteFoodItem);
 
+// Route to Upload Menu Image
+//Need SWAGGER DOCUMENTATION
+
+router.post("/menuimage", uploadMenuImage);
+
 // Cart routes
 /**
  * @swagger
@@ -244,6 +260,10 @@ router.post('/cart', createOrder);
  *         description: Successful response with a list of cart items.
  */
 router.get('/cart', getCartItems);
+
+//NEED TO ADD SWAGGER DOCS
+
+router.get("/cart/user", getCartItemsByReservee);
 
 /**
  * @swagger
@@ -302,13 +322,23 @@ router.put('/cart/:id', updateCartItem);
  */
 router.delete('/cart/:id', deleteCartItem);
 
+
 // Table routes
+
+//NEED SWAGGER DOCS
+router.get("/table", getAllTables);
+
+//NEED SWAGGER DOCS
+router.post("/table", addTable);
+
+//NEED SWAGGER DOCS
+router.delete("/table/:tableNumber", deleteTable);
 
 //Reserve table
 
 /**
  * @swagger
- * /api/table:
+ * /api/reservedTable:
  *   post:
  *     summary: Reserve a table
  *     description: Reserve a table at the restaurant.
@@ -316,13 +346,13 @@ router.delete('/cart/:id', deleteCartItem);
  *       201:
  *         description: Table reserved successfully.
  */
-router.post('/table', reserveTable);
+router.post('/reservedTable', reserveTable);
 
 //Get tables 
 
 /**
  * @swagger
- * /api/table:
+ * /api/reservedTable:
  *   get:
  *     summary: Get all table reservations
  *     description: Retrieve a list of all table reservations.
@@ -330,7 +360,15 @@ router.post('/table', reserveTable);
  *       200:
  *         description: Successful response with a list of table reservations.
  */
-router.get('/table', getAllTables);
+router.get('/reservedTable', getAllReservedTables);
+
+// NEED SWAGGER DOCUMENTATION
+
+router.get("/reservedTable/user", getTableReservationsByUser);
+
+router.delete("/reservedTable/:id", deleteTableReservation);
+
+router.delete("/reservedTable/:reservationId", cancelTableReservation);
 
 // Admin routes
 
