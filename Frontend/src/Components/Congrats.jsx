@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/style-congrats.css";
 import axiosInstance from "./axiosInstance";
+import mongoose from "mongoose";
 
 
 const CongratsPage = (props) => {
@@ -24,10 +25,17 @@ const CongratsPage = (props) => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
+        console.log(userId);
+        
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+          console.error("Invalid user ID");
+          return; // Exit early if the userId is invalid
+        }
+  
         const response = await axiosInstance.get(
-          `${backendUri}/api/cart?reservee=${userId}`
+          `${backendUri}/api/cart/user?reservee=${userId}`
         );
-
+  
         if (response.data.length > 0) {
           setCurrentOrder(response.data[response.data.length - 1]); 
           setPreviousOrders(response.data.slice(0, -1)); 
@@ -39,10 +47,10 @@ const CongratsPage = (props) => {
         console.error("Error fetching cart:", error);
       }
     };
-
+  
     if (userId) fetchCart();
   }, [userId]);
-
+  
   const handleReceived = async () => {
     try {
       await axiosInstance.put(`${backendUri}/api/cart/${currentOrder._id}`, { received: true });

@@ -1,40 +1,49 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "../styles/styles.css";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaTrash } from "react-icons/fa";
 import axiosInstance from "./axiosInstance";
-
+import { io } from "socket.io-client";
+import { socket } from "./socket";
 const backendUri = import.meta.env.VITE_BACKEND_URI;
 
 const Table = (props) => {
-  const initialTables = [
-    { number: 1, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 2, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 3, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 4, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 5, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 6, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 7, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 8, accommodation: "4", reserved: false, availableTimeSlots: [] },
-    { number: 9, accommodation: "4", reserved: false, availableTimeSlots: [] },
-  ];
-
-  const [tables, setTables] = useState(initialTables);
+  const [tables, setTables] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState("");
   const [reserved, setReserved] = useState(false);
   const [bookedTables, setBookedTables] = useState([]);
   const [user, setUser] = useState(null);
 
+  const fetchTables = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get(`/api/table`);
+      setTables(response.data);
+    } catch (error) {
+      console.error("Error fetching tables:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchTables();
+  }, [fetchTables]);
+
+  useEffect(() => {
+    socket.on("refreshTables", fetchTables);
+    return () => {
+      socket.off("refreshTables", fetchTables);
+    };
+  }, [fetchTables]);
+
   useEffect(() => {
     const fetchReservations = async () => {
       try {
-        const response = await axiosInstance.get(`${backendUri}/api/reservedTable`);
+        const response = await axiosInstance.get(`/api/reservedTable`);
         const reservations = response.data;
-  
         const token = localStorage.getItem("token");
         let currentUser = null;
+        
         if (token) {
           try {
             currentUser = JSON.parse(atob(token.split(".")[1])); // Decode JWT payload
@@ -43,73 +52,62 @@ const Table = (props) => {
             console.error("Invalid JWT Token:", error);
           }
         }
-  
+
         const timeslots = [
-          "8am-9am",
-          "9am-10am",
-          "10am-11am",
-          "11am-12pm",
-          "12pm-1pm",
-          "1pm-2pm",
-          "2pm-3pm",
-          "3pm-4pm",
-          "4pm-5pm",
-          "5pm-6pm",
-          "6pm-7pm",
-          "7pm-8pm",
-          "8pm-9pm",
-          "9pm-10pm",
-          "10pm-11pm",
+          "8am-9am", "9am-10am", "10am-11am", "11am-12pm", "12pm-1pm",
+          "1pm-2pm", "2pm-3pm", "3pm-4pm", "4pm-5pm", "5pm-6pm",
+          "6pm-7pm", "7pm-8pm", "8pm-9pm", "9pm-10pm", "10pm-11pm"
         ];
-  
+
         const nextDay = new Date();
         nextDay.setDate(nextDay.getDate() + 1);
         const formattedDate = nextDay.toLocaleDateString();
-  
-        const updatedTables = initialTables.map((table) => {
-          const tableReservations = reservations.filter(
-            (res) => res.table.number === table.number && res.table.date === formattedDate
-          );
-  
-          const userReserved = tableReservations.some((res) => res.reservee === currentUser?.id);
-  
-          return {
-            ...table,
-            reserved: userReserved, // Reserved status is now based on the current user
-            availableTimeSlots: timeslots.filter(
-              (slot) => !tableReservations.some((res) => res.table.time === slot)
-            ),
-          };
-        });
-  
-        setTables(updatedTables);
+
+        setTables((prevTables) =>
+          prevTables.map((table) => {
+            const tableReservations = reservations.filter(
+              (res) => res.table.number === table.number && res.table.date === formattedDate
+            );
+
+            const userReserved = tableReservations.some((res) => res.reservee === currentUser?.id);
+
+            return {
+              ...table,
+              reserved: userReserved,
+              availableTimeSlots: timeslots.filter(
+                (slot) => !tableReservations.some((res) => res.table.time === slot)
+              ),
+            };
+          })
+        );
       } catch (error) {
         console.error("Error fetching reservations:", error);
       }
     };
-  
+
     fetchReservations();
-  }, []);
-  
-  
+  }, []); // ✅ Removed `tables` from dependencies to avoid infinite re-renders
 
   const reserveTable = async (tableNumber, timeSlot) => {
     if (!timeSlot) return alert("Select a time slot.");
     if (!user?.id) return alert("Login required.");
-  
+
     const formattedDate = new Date(Date.now() + 86400000).toLocaleDateString();
     const reservationData = {
       reservee: user.id,
       table: { number: tableNumber, time: timeSlot, date: formattedDate, accommodation: "4" },
     };
-  
+
     try {
-      await axiosInstance.post(`${backendUri}/api/reservedTable`, reservationData);
-      const updatedTables = tables.map((t) =>
-        t.number === tableNumber ? { ...t, reserved: true, availableTimeSlots: t.availableTimeSlots.filter((s) => s !== timeSlot) } : t
+      await axiosInstance.post(`/api/reservedTable`, reservationData);
+      setTables((prevTables) =>
+        prevTables.map((t) =>
+          t.number === tableNumber
+            ? { ...t, reserved: true, availableTimeSlots: t.availableTimeSlots.filter((s) => s !== timeSlot) }
+            : t
+        )
       );
-      setTables(updatedTables);
-      props.updateBookedTables([...bookedTables, reservationData]);
+      props.updateBookedTables((prev) => [...prev, reservationData]);
       sessionStorage.setItem(`table${tableNumber}_bookedTimeSlots`, JSON.stringify([...bookedTables, timeSlot]));
       sessionStorage.setItem(`table${tableNumber}_reserved`, "true");
       props.toggleVisibilityTable(true);
@@ -117,7 +115,6 @@ const Table = (props) => {
       console.error("Error reserving table:", error);
     }
   };
-  
 
   const handleReservation = (event, tableNumber) => {
     event.preventDefault();
@@ -131,48 +128,24 @@ const Table = (props) => {
     reserveTable(selectedTable, selectedTimeSlot);
   };
 
-  const addTable = () => {
-    const newTableNumber = tables.length + 1;
-    const newTable = {
-      number: newTableNumber,
-      accommodation: "4",
-      reserved: false,
-      availableTimeSlots: [
-        "8am-9am",
-        "9am-10am",
-        "10am-11am",
-        "11am-12pm",
-        "12pm-1pm",
-        "1pm-2pm",
-        "2pm-3pm",
-        "3pm-4pm",
-        "4pm-5pm",
-        "5pm-6pm",
-        "6pm-7pm",
-        "7pm-8pm",
-        "8pm-9pm",
-        "9pm-10pm",
-        "10pm-11pm",
-      ],
-    };
-
-    setTables([...tables, newTable]);
-    sessionStorage.setItem(
-      `table${newTableNumber}_bookedTimeSlots`,
-      JSON.stringify([])
-    );
-    sessionStorage.setItem(`table${newTableNumber}_reserved`, "false");
+  const addTable = async () => {
+    try {
+      const response = await axiosInstance.post(`/api/table`, {
+        accommodation: "4",
+      });
+      setTables((prevTables) => [...prevTables, response.data]);
+    } catch (error) {
+      console.error("Error adding table:", error);
+    }
   };
 
-  const deleteTable = (tableNumber) => {
-    const updatedTables = tables
-      .filter((table) => table.number !== tableNumber) // Remove selected table
-      .map((table, index) => ({
-        ...table,
-        number: index + 1, // Re-number remaining tables
-      }));
-
-    setTables(updatedTables);
+  const deleteTable = async (tableNumber) => {
+    try {
+      await axiosInstance.delete(`/api/table/${tableNumber}`);
+      setTables((prevTables) => prevTables.filter((table) => table.number !== tableNumber));
+    } catch (error) {
+      console.error("Error deleting table:", error);
+    }
   };
 
   return (
@@ -195,7 +168,7 @@ const Table = (props) => {
                   key={table.number}
                   initial={{ opacity: 1 }}
                   animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, transition: { duration: 0.5 } }} 
+                  exit={{ opacity: 0, transition: { duration: 0.5 } }}
                   style={{
                     backgroundColor: table.reserved ? "lightgreen" : "inherit",
                     color: table.reserved ? "#333333" : "inherit",
@@ -207,19 +180,13 @@ const Table = (props) => {
                   <td>{table.accommodation}</td>
                   <td>
                     {user?.role === "Admin" || user?.role === "Manager" ? (
-                      <button
-                        onClick={() => deleteTable(table.number)}
-                        className="button"
-                      >
+                      <button onClick={() => deleteTable(table.number)} className="button">
                         Remove Table
                       </button>
                     ) : selectedTable === table.number && reserved ? (
                       <form onSubmit={handleConfirmation} className="l-form">
                         <button type="submit" className="button">Confirm</button>
-                        <select
-                          value={selectedTimeSlot}
-                          onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                        >
+                        <select value={selectedTimeSlot} onChange={(e) => setSelectedTimeSlot(e.target.value)}>
                           <option value="">Select a time slot</option>
                           {table.availableTimeSlots.map((slot) => (
                             <option key={slot} value={slot}>{slot}</option>
@@ -227,10 +194,7 @@ const Table = (props) => {
                         </select>
                       </form>
                     ) : (
-                      <button
-                        onClick={(event) => handleReservation(event, table.number)}
-                        className="button"
-                      >
+                      <button onClick={(event) => handleReservation(event, table.number)} className="button">
                         Reserve
                       </button>
                     )}
@@ -243,15 +207,16 @@ const Table = (props) => {
 
         {(user?.role === "Admin" || user?.role === "Manager") && (
           <div className="admin-button-container">
-            <button className="admin-button" onClick={addTable}>
-              Add Table
-            </button>
+          <button className="admin-button" onClick={addTable}>
+            Add Table
+          </button>
           </div>
         )}
       </div>
     </motion.div>
   );
 };
+
 
 const BookedTables = () => {
   const [tablesBooked, setTablesBooked] = useState([]);

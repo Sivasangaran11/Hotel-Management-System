@@ -48,7 +48,9 @@ axiosInstance.interceptors.response.use(
 
         // If refresh fails, log the user out
         localStorage.removeItem("token");
-        window.location.href = "/login"; // Redirect to login page
+        setTimeout(() => {
+          window.location.href = "/Login"; // Redirect after delay
+        }, 3000); 
       }
     }
     return Promise.reject(error);

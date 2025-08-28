@@ -92,7 +92,15 @@ const Login = (props) => {
           "User does not exist. Redirecting to the registration page."
         );
         navigateTo("/register");
-      } else {
+      }
+      else if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "Incorrect password."
+      ) {
+        setError("Incorrect email or password. Please try again.");
+      }
+      else {
         setError("Failed to login. Please try again later.");
       }
     }

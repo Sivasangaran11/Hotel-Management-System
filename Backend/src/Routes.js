@@ -261,6 +261,10 @@ router.post('/cart', createOrder);
  */
 router.get('/cart', getCartItems);
 
+//NEED TO ADD SWAGGER DOCS
+
+router.get("/cart/user", getCartItemsByReservee);
+
 /**
  * @swagger
  * /api/cart/{id}:
@@ -318,9 +322,6 @@ router.put('/cart/:id', updateCartItem);
  */
 router.delete('/cart/:id', deleteCartItem);
 
-//NEED TO ADD SWAGGER DOCS
-
-router.get("/cart", getCartItemsByReservee);
 
 // Table routes
 

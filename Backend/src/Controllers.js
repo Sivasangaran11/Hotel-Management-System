@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const multer = require("multer");
 const fs = require("fs");
+const mongoose = require("mongoose");
 
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
@@ -361,22 +362,23 @@ const getCartItemById = async (req, res) => {
 
 const getCartItemsByReservee = async (req, res) => {
   try {
-    const { reservee } = req.query; // Get reservee from query parameters
+    const { reservee } = req.query;
+
+    console.log("Received reservee:", reservee); // Debugging
 
     if (!reservee) {
-      return res.status(400).json({ message: "Reservee ID is required" });
+      return res.status(400).json({ message: "Missing reservee parameter" });
     }
 
-    const orders = await OrderModel.find({ reservee });
-
-    if (orders.length === 0) {
-      return res.status(404).json({ message: "Cart items not found" });
+    if (!mongoose.Types.ObjectId.isValid(reservee)) {
+      return res.status(400).json({ message: "Invalid user ID format" });
     }
 
-    res.json(orders);
+    const cartItems = await CartItem.find({ reservee }).populate("items.foodId");
+    res.status(200).json(cartItems);
   } catch (error) {
-    console.error("Error fetching cart:", error);
-    res.status(500).json({ error: "Error fetching orders" });
+    console.error("Error fetching cart items:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

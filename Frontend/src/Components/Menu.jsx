@@ -7,6 +7,7 @@ import loadingGif from "/img/loader.gif";
 import { FaTrash, FaShoppingCart } from "react-icons/fa";
 import axiosInstance from "./axiosInstance";
 
+
 const backendUri = import.meta.env.VITE_BACKEND_URI;
 
 const Menu = (props) => {
@@ -25,6 +26,8 @@ const Menu = (props) => {
   const [showCartIcon, setShowCartIcon] = useState(false);
   const userId = props.userId;
   const navigateTo = useNavigate();
+
+  
 
   useEffect(() => {
     axiosInstance
@@ -303,11 +306,11 @@ const Cart = (props) => {
     );
     setTotalAmount(newTotalAmount);
 
-    if (cartItems.length === 0) {
-      props.VisibleCart(false);
-      window.alert("No items selected");
-      navigateTo("/menu");
-    }
+    // if (cartItems.length === 0) {
+    //   props.VisibleCart(false);
+    //   window.alert("No items selected");
+    //   navigateTo("/menu");
+    // }
 
     // Format the cart items to match the required structure
     const formattedOrder = [
